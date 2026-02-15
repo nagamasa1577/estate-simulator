@@ -434,7 +434,7 @@
     const inputsConfig = [
         { title: "STEP1: 物件情報・取得費用", fields: [ { id: "price", label: "物件価格 (万円)", type: "number", val: 3000, note: "売買代金" }, { id: "initial_cost_rate", label: "諸経費率 (%)", type: "number", val: 8, note: "仲介手数料・登記・税金 (概算7-8%)" }, { id: "total_cost", label: "物件取得総額 (万円)", type: "text", val: "", note: "※物件価格 + 諸経費 (自動計算)", readonly: true }, { id: "building_price", label: "うち建物価格 (万円)", type: "number", val: 1500, note: "減価償却の対象額" }, { id: "rent", label: "月額家賃設定 (万円)", type: "number", val: 14, note: "満室時想定" }, { id: "vacancy_rate", label: "想定空室率 (%)", type: "number", val: 15, note: "地方築古なら15-20%" }, { id: "expense_rate", label: "ランニング諸経費率 (%)", type: "number", val: 15, note: "管理費・修繕積立等 (15-20%)" }, { id: "age", label: "築年数 (年)", type: "number", val: 45, note: "" }, { id: "structure", label: "構造", type: "select", val: "RC", options: ["RC", "重量鉄骨", "木造"] } ] },
         { title: "STEP2: 資金計画", fields: [ { id: "required_fund", label: "必要資金 (万円)", type: "text", val: "", note: "※STEP1の取得総額", readonly: true }, { id: "own_money", label: "自己資金 (万円)", type: "number", val: 500, note: "頭金 + 諸費用分" }, { id: "loan_amount", label: "借入金額 (万円)", type: "number", val: 2740, note: "※自動計算 (必要資金 - 自己資金)", readonly: true }, { id: "loan_years", label: "借入期間 (年)", type: "number", val: 20, note: "" }, { id: "interest_rate", label: "借入金利 (%)", type: "number", val: 2.3, step: 0.1, note: "変動/固定" } ] },
-        { title: "STEP3: あなたの属性（節税計算）", fields: [ { id: "salary", label: "額面年収 (万円)", type: "number", val: 1000, note: "源泉徴収票の支払金額" }, { id: "has_spouse", label: "配偶者あり (控除用)", type: "checkbox_inline", val: false }, { id: "dependents", label: "扶養親族の人数 (16歳以上)", type: "select", val: "0", options: ["0", "1", "2", "3"], note:"1人あたり38万円控除で概算" }, { id: "sell_price", label: "出口: 物件売却時 想定価格 (万円)", type: "number", val: 2400, note: "減価償却最終年の売却額" } ] }
+        { title: "STEP3: あなたの属性（節税計算）", fields: [ { id: "salary", label: "額面年収 (万円)", type: "number", val: 1400, note: "源泉徴収票の支払金額" }, { id: "has_spouse", label: "配偶者あり (控除用)", type: "checkbox_inline", val: false }, { id: "dependents", label: "扶養親族の人数 (16歳以上)", type: "select", val: "0", options: ["0", "1", "2", "3"], note:"1人あたり38万円控除で概算" }, { id: "sell_price", label: "出口: 物件売却時 想定価格 (万円)", type: "number", val: 2500, note: "減価償却最終年の売却額" } ] }
     ];
 
     function createForm(prefix) {
@@ -825,11 +825,11 @@
                 if (el) data[field.id] = (field.type === "checkbox" || field.type === "checkbox_inline") ? el.checked : el.value;
             });
         });
-        localStorage.setItem("realEstateSimData_Pro_Final_Realistic", JSON.stringify(data));
+        localStorage.setItem("realEstateSimData_Pro_Final_Integer", JSON.stringify(data));
         alert("設定を保存しました。");
     }
     function loadData() {
-        const saved = localStorage.getItem("realEstateSimData_Pro_Final_Realistic");
+        const saved = localStorage.getItem("realEstateSimData_Pro_Final_Integer");
         if (saved) {
             const data = JSON.parse(saved);
             Object.keys(data).forEach(key => {
@@ -843,6 +843,7 @@
         calculate("main_");
         calculate("cmp_");
     }
+    // ★修正: 正しいURLをコピーするように変更
     function copyUrl() {
         navigator.clipboard.writeText("https://estate-simulator-rouge.vercel.app/");
         alert("URLをコピーしました！");
