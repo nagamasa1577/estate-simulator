@@ -57,7 +57,7 @@
             align-items: flex-start;
         }
 
-        /* 左カラム (サイドバー) - 幅を広げて横長レイアウトに対応 */
+        /* 左カラム (サイドバー) */
         .col-left {
             width: 380px; 
             flex-shrink: 0;
@@ -93,7 +93,7 @@
             }
             
             /* スマホではバナー内のレイアウトを少し調整 */
-            .promo-card, .link-policy {
+            .link-policy {
                 flex-direction: row; /* スマホでも横並び維持 */
                 align-items: center;
             }
@@ -111,67 +111,67 @@
             margin-bottom: 20px;
         }
 
-        /* --- 左カラム専用デザイン (横長レイアウト) --- */
+        /* --- 左カラム専用デザイン --- */
         .promo-card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
             padding: 20px;
             border: 1px solid rgba(255,255,255,0.5);
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex; /* 横並びにする */
+            /* 縦積みに変更 */
+            display: flex;
+            flex-direction: column;
             gap: 15px;
-            align-items: flex-start;
-            text-align: left;
+            text-align: center; /* 中央揃え */
             transition: transform 0.2s;
         }
         .promo-card:hover {
             transform: translateY(-2px);
         }
 
-        /* アイコンエリア */
-        .promo-icon {
-            font-size: 32px;
-            background: #f0f8ff;
-            width: 60px;
-            height: 60px;
+        /* カード画像横並びコンテナ */
+        .promo-card-images {
             display: flex;
-            align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            flex-shrink: 0; /* 縮まないようにする */
+            gap: 8px; /* 画像間の隙間 */
+        }
+        /* 各カード画像 */
+        .promo-card-img {
+            width: 30%; /* 3枚並ぶので調整 */
+            height: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
         }
 
-        /* テキストエリア */
-        .promo-content {
-            flex: 1;
+        /* 新しいテキストスタイル */
+        .promo-card-text {
+            font-size: 0.95em;
+            color: #334155;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .promo-card-text strong {
+            font-size: 1.15em;
+            color: var(--amex-blue); /* 強調色 */
+            display: block; /* 改行効果 */
+            margin-bottom: 8px;
         }
 
-        .promo-title {
-            font-size: 1.05em;
-            font-weight: bold;
-            color: #1e293b;
-            margin-bottom: 5px;
-            line-height: 1.3;
-        }
-        .promo-text {
-            font-size: 0.85em;
-            color: #555;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
+        /* ボタン */
         .btn-amex {
             display: inline-block;
             width: 100%;
             background-color: var(--amex-blue);
             color: white;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 1em;
             text-decoration: none;
-            padding: 10px 0;
-            border-radius: 6px;
+            padding: 12px 0;
+            border-radius: 8px;
             text-align: center;
             transition: background 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .btn-amex:hover {
             background-color: #005bb5;
@@ -351,17 +351,18 @@
         <aside class="col-left">
             
             <div class="promo-card">
-                <div class="promo-icon">✈️</div>
-                <div class="promo-content">
-                    <div class="promo-title">不動産投資は<br>カード入会特典<br>ゲットのチャンス</div>
-                    <div class="promo-text">
-                        初期費用や税金の支払いで一気にポイント獲得。<br>
-                        <strong>「マイルで視察旅行」</strong>も夢ではありません。
-                    </div>
-                    <a href="https://amex-mile-simulation.com/" target="_blank" class="btn-amex">
-                        損益シミュレーションへ ＞
-                    </a>
+                <div class="promo-card-images">
+                    <img src="image_10.png" alt="Amex Platinum" class="promo-card-img">
+                    <img src="image_11.png" alt="Amex Gold Preferred" class="promo-card-img">
+                    <img src="image_12.png" alt="Marriott Bonvoy Premium" class="promo-card-img">
                 </div>
+                <p class="promo-card-text">
+                    <strong>不動産投資はカード入会特典ゲットのチャンス</strong>
+                    初期費用や税金の支払いで一気にポイント獲得。
+                </p>
+                <a href="https://amex-mile-simulation.com/" target="_blank" class="btn-amex">
+                    損益シミュレーションへ ＞
+                </a>
             </div>
 
             <div class="link-policy">
