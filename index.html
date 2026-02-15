@@ -125,7 +125,7 @@
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(15px);
             border-radius: 16px;
-            padding: 30px 20px; /* 横パディングを少し調整 */
+            padding: 30px 20px;
             border: 1px solid rgba(255,255,255,0.6);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             display: flex;
@@ -154,38 +154,35 @@
             background: #fff;
         }
 
-        /* --- バナーテキスト修正部分 --- */
+        /* --- バナーテキスト --- */
         .promo-card-text {
             line-height: 1.4;
             margin: 0;
         }
-        /* 青色・中の強調テキスト */
         .promo-main-text {
             display: block;
             color: var(--amex-blue);
             font-weight: 800; 
-            font-size: 1.35em; /* 1行目のサイズ */
+            font-size: 1.35em;
             line-height: 1.4;
             text-shadow: 0 1px 2px rgba(0,111,207,0.1);
         }
-        /* 2行目：サイズを調整して1行に収める */
         .promo-main-text-large {
             display: block;
             color: var(--amex-blue);
             font-weight: 800; 
-            font-size: 1.35em; /* フォントサイズを縮小して1行化 */
+            font-size: 1.35em;
             line-height: 1.4;
             text-shadow: 0 1px 2px rgba(0,111,207,0.1);
-            white-space: nowrap; /* 改行禁止 */
+            white-space: nowrap;
         }
-        /* 小さい補足テキスト */
         .promo-sub-text {
             display: block;
-            font-size: 0.85em; /* サイズ調整 */
+            font-size: 0.85em;
             color: #475569;
             margin-top: 12px;
             font-weight: bold;
-            white-space: nowrap; /* 改行禁止 */
+            white-space: nowrap;
         }
 
         .btn-amex {
@@ -506,13 +503,17 @@
         const initialCostRate = getVal(prefix + "initial_cost_rate") / 100;
         const initialCostVal = price * initialCostRate;
         const totalCostVal = price + initialCostVal; 
-        setVal(prefix + "total_cost", totalCostVal.toFixed(1)); 
-        setVal(prefix + "required_fund", totalCostVal.toFixed(1)); 
+        
+        // ★修正: 整数表示（四捨五入）
+        setVal(prefix + "total_cost", Math.round(totalCostVal)); 
+        setVal(prefix + "required_fund", Math.round(totalCostVal)); 
 
         const ownMoney = getVal(prefix + "own_money");
-        let loanAmountCalc = totalCostVal - ownMoney;
+        
+        // ★修正: 借入金額も整数計算
+        let loanAmountCalc = Math.round(totalCostVal) - ownMoney;
         if (loanAmountCalc < 0) loanAmountCalc = 0;
-        setVal(prefix + "loan_amount", loanAmountCalc.toFixed(1));
+        setVal(prefix + "loan_amount", loanAmountCalc);
 
         const loanAmount = loanAmountCalc;
         const priceYen = price * 10000;
@@ -726,11 +727,11 @@
                 if (el) data[field.id] = (field.type === "checkbox" || field.type === "checkbox_inline") ? el.checked : el.value;
             });
         });
-        localStorage.setItem("realEstateSimData_Pro_Final_Ultra_Fix", JSON.stringify(data));
+        localStorage.setItem("realEstateSimData_Pro_Final_Integer", JSON.stringify(data));
         alert("設定を保存しました。");
     }
     function loadData() {
-        const saved = localStorage.getItem("realEstateSimData_Pro_Final_Ultra_Fix");
+        const saved = localStorage.getItem("realEstateSimData_Pro_Final_Integer");
         if (saved) {
             const data = JSON.parse(saved);
             Object.keys(data).forEach(key => {
