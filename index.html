@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不動産投資・節税シミュレーション</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* --- テーマカラー設定 (Dark Navy Style) --- */
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); /* 濃紺グラデーション */
+            --glass-bg: rgba(255, 255, 255, 0.95); /* すりガラス風パネル */
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            
+            --primary: #1e293b; /* 文字色（濃いグレー） */
+            --accent: #27ae60;  /* 成功・利益の緑 */
+            --danger: #c0392b;  /* 赤字・警告 */
+            --warning: #e67e22; /* 注意 */
+            --amex-blue: #006fcf; /* アメックスブルー */
+            
+            --hero-bg: #e8f5e9; /* 薄い緑（インパクトエリア背景） */
+            --hero-text: #2e7d32; /* 濃い緑（インパクトエリア文字） */
+        }
+
+        body {
+            font-family: "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* --- 3カラムレイアウト --- */
+        .layout-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        /* 左カラム (サイドバー) */
+        .col-left {
+            width: 320px;
+            flex-shrink: 0;
+            display: flex;
+            flex-col;
+            gap: 20px;
+        }
+
+        /* 中央カラム (メインコンテンツ) */
+        .col-center {
+            flex: 1; /* 残りの幅をすべて使う */
+            min-width: 0; /* フレックスアイテムの縮小を許可 */
+        }
+
+        /* 右カラム (現在は空) */
+        .col-right {
+            width: 0; /* 将来用 */
+            display: none; /* 現状は非表示 */
+        }
+
+        /* --- レスポンシブ対応 (スマホ・タブレット) --- */
+        @media (max-width: 1024px) {
+            .layout-wrapper {
+                flex-direction: column; /* 縦並びに変更 */
+            }
+            .col-left {
+                width: 100%; /* 横幅いっぱいに */
+                order: 2; /* シミュレーターの下に移動 */
+            }
+            .col-center {
+                width: 100%;
+                order: 1; /* シミュレーターを上に */
+            }
+        }
+
+        /* --- 共通デザインパーツ --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff; /* 背景が濃紺なので白文字 */
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* --- 左サイドバー専用デザイン --- */
+        .promo-card {
+            background: linear-gradient(to bottom right, #ffffff, #f0f8ff);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .promo-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .promo-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .btn-amex {
+            display: block;
+            width: 100%;
+            background-color: var(--amex-blue);
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 12px 0;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .btn-amex:hover {
+            background-color: #005bb5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .link-policy {
+            font-size: 0.85em;
+            color: #ddd; /* 濃紺背景の上なので薄いグレー */
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .copy-btn {
+            background: #fff;
+            color: #333;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* --- シミュレーター本体のデザイン --- */
+        /* 比較モード切替 */
+        .simulator-wrapper {
+            display: flex;
+            gap: 20px;
+        }
+        .sim-col {
+            flex: 1;
+            transition: all 0.3s;
+        }
+        #sim-compare {
+            display: none;
+            border-left: 4px solid var(--accent);
+        }
+        .show-compare #sim-compare {
+            display: block;
+        }
+
+        /* ヒーローエリア (インパクト) */
+        .hero-section {
+            background-color: var(--hero-bg);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .hero-title { font-size: 1.1em; color: #555; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .hero-val { font-size: 2.8em; font-weight: bold; color: var(--hero-text); margin: 10px 0 5px 0; letter-spacing: -1px; }
+        .hero-val.minus { color: var(--danger); }
+        .hero-note { font-size: 0.8em; color: #777; }
+
+        /* アコーディオン */
+        .accordion { cursor: pointer; padding: 12px 15px; width: 100%; border: none; text-align: left; outline: none; font-size: 16px; background-color: #eee; color: #444; font-weight: bold; margin-top: 10px; border-radius: 4px; display: flex; justify-content: space-between; box-sizing: border-box; }
+        .active, .accordion:hover { background-color: #ddd; }
+        .accordion:after { content: '\002B'; font-weight: bold; float: right; margin-left: 5px; }
+        .accordion.active:after { content: "\2212"; }
+        .panel { padding: 0 15px; background-color: white; max-height: none; overflow: hidden; transition: max-height 0.3s ease-out; border: 1px solid #eee; border-top: none; display: block; box-sizing: border-box; }
+        
+        /* フォーム要素 */
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #666; font-weight: bold; }
+        input[type="number"], input[type="text"], select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        .note { font-size: 12px; color: #888; margin-top: 4px; display: block; }
+        .auto-calc { background-color: #f0f8ff; color: #333; pointer-events: none; border: 1px solid #bce; font-weight: bold; }
+        
+        .form-group.inline-check { display: flex; align-items: center; gap: 10px; }
+        .form-group.inline-check label { margin-bottom: 0; cursor: pointer; }
+        .form-group.inline-check input { width: auto; transform: scale(1.2); cursor: pointer; }
+
+        /* 結果表示エリア */
+        .result-box { background: #fff; padding: 0; margin-top: 20px; }
+        .result-section { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #ddd; }
+        .result-section:last-child { border-bottom: none; }
+        .result-title { font-size: 1.1em; font-weight: bold; color: var(--primary); margin-bottom: 10px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        
+        .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-size: 0.95em; }
+        .val-pos { color: blue; font-weight: bold; }
+        .val-neg { color: var(--danger); font-weight: bold; }
+        .val-warn { color: var(--warning); font-weight: bold; }
+        
+        /* 詳細ボタンと展開エリア */
+        .btn-detail { background: none; border: none; color: #666; font-size: 0.8em; text-decoration: underline; cursor: pointer; margin-left: 5px; padding: 0; }
+        .btn-detail:hover { color: var(--primary); }
+        .detail-content { display: none; background: #f8f9fa; padding: 10px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #ccc; font-size: 0.85em; color: #555; line-height: 1.5; }
+        .detail-content.show { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .formula-line { display: flex; justify-content: space-between; margin-bottom: 3px; }
+        .formula-result { border-top: 1px solid #999; margin-top: 3px; padding-top: 3px; text-align: right; font-weight: bold; }
+
+        /* 操作ボタン */
+        .btn-area { text-align: center; margin-bottom: 20px; }
+        button.btn { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; color: white; transition: 0.3s; margin: 0 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .btn-save { background-color: var(--primary); }
+        .btn-compare { background-color: var(--accent); }
+        .btn-copy { background-color: #f39c12; margin-bottom: 15px; width: 100%; font-weight: bold; }
+        
+        /* 下部トータル損益（詳細・常時全開版） */
+        .total-profit-footer { 
+            background: #e8f5e9;
+            padding: 20px; 
+            border-radius: 8px; 
+            text-align: center; 
+            margin-top: 20px; 
+            border: 2px solid var(--accent);
+        }
+        .total-val-footer { font-size: 1.8em; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
+        .total-val-footer.minus { color: var(--danger); }
+        
+        .breakdown-list {
+            text-align: left;
+            background: rgba(255,255,255,0.6);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+        .breakdown-row {
+            display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;
+        }
+        .breakdown-row:last-child { border-bottom: none; }
+        .breakdown-total {
+            text-align: right; font-weight: bold; margin-top: 10px; border-top: 2px solid #333; padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>不動産投資・節税シミュレーション</h1>
+
+    <div class="layout-wrapper">
+        
+        <aside class="col-left">
+            <div class="promo-card">
+                <div style="font-size:30px; margin-bottom:10px;">💳✈️</div>
+                <div class="promo-title">不動産投資は<br>カード入会特典<br>ゲットのチャンス</div>
+                <div class="promo-text">
+                    初期費用や税金の支払いで一気にポイント獲得。<br>
+                    <strong>「マイルで視察旅行」</strong>も夢ではありません。<br>
+                    どのカードが一番お得かチェック！
+                </div>
+                <a href="https://amex-mile-simulation.com/" target="_blank" class="btn-amex">
+                    損益シミュレーションへ ＞
+                </a>
+            </div>
+
+            <div class="link-policy">
+                <div style="font-weight:bold; margin-bottom:5px;">🔗 リンク・引用について</div>
+                当シミュレーターはリンクフリーです。<br>
+                ブログやSNSでご自由にお使いください。
+                <button class="copy-btn" onclick="copyUrl()">URLをコピー</button>
+            </div>
+        </aside>
+
+        <main class="col-center">
+            
+            <div class="btn-area">
+                <button class="btn btn-save" onclick="saveData()">💾 設定を保存</button>
+                <button class="btn btn-compare" onclick="toggleCompare()">⚖️ 比較モード切替</button>
+            </div>
+
+            <div class="glass-panel">
+                <div class="simulator-wrapper" id="sim-wrapper">
+                    
+                    <div class="sim-col" id="sim-main">
+                        <div id="hero-main" class="hero-section">
+                            <div class="hero-title">🏆 トータル最終損益</div>
+                            <div class="hero-val" id="hero_total_val">--- 円</div>
+                            <div class="hero-note">(保有中CF + 節税総額 + 売却益 - 自己資金)</div>
+                        </div>
+
+                        <h3 style="text-align:center; margin-top:0; color:#555; font-size:1em;">プランA (メイン設定)</h3>
+                        <div id="form-main"></div>
+                        <div id="result-main"></div>
+                    </div>
+
+                    <div class="sim-col" id="sim-compare">
+                        <div id="hero-cmp" class="hero-section" style="background:#fff3e0; border-color:#f39c12;">
+                            <div class="hero-title">🏆 トータル最終損益 (B)</div>
+                            <div class="hero-val" id="cmp_hero_total_val" style="color:#e67e22;">--- 円</div>
+                            <div class="hero-note">(保有中CF + 節税総額 + 売却益 - 自己資金)</div>
+                        </div>
+
+                        <h3 style="text-align:center; margin-top:0; color:#555; font-size:1em;">プランB (比較用設定)</h3>
+                        <button class="btn btn-copy" onclick="copyMainToCompare()">プランAの内容をコピーする</button>
+                        <div id="form-compare"></div>
+                        <div id="result-compare"></div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <aside class="col-right">
+            </aside>
+
+    </div>
+
+<script>
+    /* =========================================
+       ロジック部（変更なし）
+       ========================================= */
+    const CONSTANTS = {
+        residentTaxRate: 0.10, 
+        reconstructionTaxRate: 0.021, 
+        transferTaxRate: 0.20315, 
+        socialInsuranceRate: 0.15 
+    };
+
+    const INCOME_TAX_BRACKETS = [
+        { limit: 1950000, rate: 0.05, deduction: 0 },
+        { limit: 3300000, rate: 0.10, deduction: 97500 },
+        { limit: 6950000, rate: 0.20, deduction: 427500 },
+        { limit: 9000000, rate: 0.23, deduction: 636000 },
+        { limit: 18000000, rate: 0.33, deduction: 1536000 },
+        { limit: 40000000, rate: 0.40, deduction: 2796000 },
+        { limit: Infinity, rate: 0.45, deduction: 4796000 }
+    ];
+
+    const inputsConfig = [
+        {
+            title: "STEP1: 物件情報・取得費用",
+            fields: [
+                { id: "price", label: "物件価格 (万円)", type: "number", val: 3000, note: "売買代金" },
+                { id: "initial_cost_rate", label: "諸経費率 (%)", type: "number", val: 8, note: "仲介手数料・登記・税金 (概算7-8%)" },
+                { id: "total_cost", label: "物件取得総額 (万円)", type: "text", val: "", note: "※物件価格 + 諸経費 (自動計算)", readonly: true },
+                { id: "building_price", label: "うち建物価格 (万円)", type: "number", val: 1500, note: "減価償却の対象額" },
+                { id: "rent", label: "月額家賃設定 (万円)", type: "number", val: 14, note: "満室時想定" },
+                { id: "vacancy_rate", label: "想定空室率 (%)", type: "number", val: 15, note: "地方築古なら15-20%" },
+                { id: "expense_rate", label: "ランニング諸経費率 (%)", type: "number", val: 15, note: "管理費・修繕積立等 (15-20%)" },
+                { id: "age", label: "築年数 (年)", type: "number", val: 45, note: "" },
+                { id: "structure", label: "構造", type: "select", val: "RC", options: ["RC", "重量鉄骨", "木造"] }
+            ]
+        },
+        {
+            title: "STEP2: 資金計画",
+            fields: [
+                { id: "required_fund", label: "必要資金 (万円)", type: "text", val: "", note: "※STEP1の取得総額", readonly: true },
+                { id: "own_money", label: "自己資金 (万円)", type: "number", val: 500, note: "頭金 + 諸費用分" },
+                { id: "loan_amount", label: "借入金額 (万円)", type: "number", val: 2740, note: "※自動計算 (必要資金 - 自己資金)", readonly: true }, 
+                { id: "loan_years", label: "借入期間 (年)", type: "number", val: 20, note: "" },
+                { id: "interest_rate", label: "借入金利 (%)", type: "number", val: 2.3, step: 0.1, note: "変動/固定" }
+            ]
+        },
+        {
+            title: "STEP3: あなたの属性（節税計算）",
+            fields: [
+                { id: "salary", label: "額面年収 (万円)", type: "number", val: 1000, note: "源泉徴収票の支払金額" },
+                { id: "has_spouse", label: "配偶者あり (控除用)", type: "checkbox_inline", val: false },
+                { id: "dependents", label: "扶養親族の人数 (16歳以上)", type: "select", val: "0", options: ["0", "1", "2", "3"], note:"1人あたり38万円控除で概算" },
+                { id: "sell_price", label: "出口: 物件売却時 想定価格 (万円)", type: "number", val: 2400, note: "減価償却最終年の売却額" }
+            ]
+        }
+    ];
+
+    function createForm(prefix) {
+        let html = "";
+        inputsConfig.forEach((section, idx) => {
+            html += `<div class="accordion active">${section.title}</div>`;
+            html += `<div class="panel" style="max-height: none; display: block;">`;
+            section.fields.forEach(field => {
+                const fieldId = `${prefix}${field.id}`;
+                if (field.type === "checkbox_inline") {
+                    html += `<div class="form-group inline-check">`;
+                    html += `<label for="${fieldId}">${field.label}</label>`;
+                    html += `<input type="checkbox" id="${fieldId}" onchange="calculate('${prefix}')" ${field.val?'checked':''}>`;
+                    html += `</div>`;
+                } else {
+                    html += `<div class="form-group"><label for="${fieldId}">${field.label}</label>`;
+                    if (field.type === "select") {
+                        html += `<select id="${fieldId}" onchange="calculate('${prefix}')">`;
+                        field.options.forEach(opt => {
+                            let disp = opt;
+                            if (field.id === "dependents") {
+                                disp = opt === "3" ? "3人以上" : opt + "人";
+                            }
+                            html += `<option value="${opt}" ${opt===field.val?'selected':''}>${disp}</option>`;
+                        });
+                        html += `</select>`;
+                    } else if (field.type === "checkbox") {
+                         html += `<input type="checkbox" id="${fieldId}" onchange="calculate('${prefix}')" ${field.val?'checked':''}>`;
+                    } else {
+                        html += `<input type="${field.type}" id="${fieldId}" value="${field.val}" step="${field.step||1}" 
+                                 class="${field.readonly?'auto-calc':''}" ${field.readonly?'readonly':''} oninput="calculate('${prefix}')">`;
+                    }
+                    if (field.note) html += `<span class="note">${field.note}</span>`;
+                    html += `</div>`;
+                }
+            });
+            html += `</div>`;
+        });
+        return html;
+    }
+
+    document.getElementById("form-main").innerHTML = createForm("main_");
+    document.getElementById("form-compare").innerHTML = createForm("cmp_");
+
+    document.addEventListener("click", function(e) {
+        if (e.target.classList.contains("accordion")) {
+            e.target.classList.toggle("active");
+            var panel = e.target.nextElementSibling;
+            if (panel.style.display === "block" || panel.style.display === "") {
+                panel.style.display = "none";
+                panel.style.maxHeight = "0";
+            } else {
+                panel.style.display = "block";
+                panel.style.maxHeight = "none";
+            }
+        }
+    });
+
+    function toggleDetails(btn) {
+        const content = btn.nextElementSibling;
+        content.classList.toggle("show");
+        btn.textContent = content.classList.contains("show") ? "[閉じる]" : "[詳細/計算式を見る]";
+    }
+
+    /* --- 計算ロジック --- */
+    function getVal(id) {
+        const el = document.getElementById(id);
+        if (!el) return 0;
+        if(el.type === "checkbox") return el.checked;
+        return Number(el.value);
+    }
+    
+    function setVal(id, val) {
+        const el = document.getElementById(id);
+        if(el) el.value = val;
+    }
+
+    function fmt(num) {
+        return num.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+
+    function calcDepreciationInfo(structure, age) {
+        let statutoryLife = 22; // 木造
+        if (structure === "RC") statutoryLife = 47;
+        else if (structure === "重量鉄骨") statutoryLife = 34;
+
+        let years;
+        let formula = "";
+        if (age >= statutoryLife) {
+            years = Math.floor(statutoryLife * 0.2);
+            formula = `(${statutoryLife} × 0.2) = ${statutoryLife*0.2}`;
+        } else {
+            years = Math.floor((statutoryLife - age) + (age * 0.2));
+            formula = `(${statutoryLife} - ${age}) + (${age} × 0.2)`;
+        }
+        years = Math.max(years, 2);
+        return { years, formula, statutoryLife };
+    }
+
+    function calcIncomeTax(taxableIncome) {
+        if (taxableIncome <= 0) return { tax: 0, rate: 0, deduction: 0 };
+        let bracket = INCOME_TAX_BRACKETS.find(b => taxableIncome <= b.limit);
+        if (!bracket) bracket = INCOME_TAX_BRACKETS[INCOME_TAX_BRACKETS.length - 1];
+        const baseTax = (taxableIncome * bracket.rate) - bracket.deduction;
+        const totalTax = baseTax * (1 + CONSTANTS.reconstructionTaxRate);
+        return { tax: Math.floor(totalTax), rate: bracket.rate, deduction: bracket.deduction };
+    }
+
+    function calculate(prefix) {
+        const price = getVal(prefix + "price");
+        const initialCostRate = getVal(prefix + "initial_cost_rate") / 100;
+        const initialCostVal = price * initialCostRate;
+        const totalCostVal = price + initialCostVal; 
+        
+        setVal(prefix + "total_cost", totalCostVal.toFixed(1)); 
+        setVal(prefix + "required_fund", totalCostVal.toFixed(1)); 
+
+        const ownMoney = getVal(prefix + "own_money");
+        let loanAmountCalc = totalCostVal - ownMoney;
+        if (loanAmountCalc < 0) loanAmountCalc = 0;
+        setVal(prefix + "loan_amount", loanAmountCalc.toFixed(1));
+
+        const loanAmount = loanAmountCalc;
+        const priceYen = price * 10000;
+        const buildingPriceYen = getVal(prefix + "building_price") * 10000;
+        const rentMonthlyYen = getVal(prefix + "rent") * 10000;
+        const vacancyRate = getVal(prefix + "vacancy_rate") / 100;
+        const expenseRate = getVal(prefix + "expense_rate") / 100;
+        const age = getVal(prefix + "age");
+        const structure = document.getElementById(prefix + "structure").value;
+        const loanAmountYen = loanAmount * 10000;
+        const loanYears = getVal(prefix + "loan_years");
+        const interestRate = getVal(prefix + "interest_rate") / 100;
+        const ownMoneyYen = ownMoney * 10000;
+        
+        const salaryYen = getVal(prefix + "salary") * 10000;
+        const hasSpouse = getVal(prefix + "has_spouse");
+        const dependentsNum = Number(document.getElementById(prefix + "dependents").value);
+        const sellPriceYen = getVal(prefix + "sell_price") * 10000;
+
+        const monthlyRate = interestRate / 12;
+        const numPayments = loanYears * 12;
+        let monthlyPayment = 0;
+        if (interestRate > 0 && loanAmountYen > 0) {
+            monthlyPayment = loanAmountYen * monthlyRate * Math.pow(1 + monthlyRate, numPayments) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+        } else if (loanAmountYen > 0) {
+            monthlyPayment = loanAmountYen / numPayments;
+        }
+        const annualPayment = monthlyPayment * 12;
+        const annualRent = rentMonthlyYen * 12;
+        const annualOperatingExpense = annualRent * (vacancyRate + expenseRate);
+        const annualCashOut = annualOperatingExpense + annualPayment;
+        const annualCashFlow = annualRent - annualCashOut;
+        const surfaceYield = (annualRent / priceYen) * 100;
+        const realYield = ((annualRent - annualOperatingExpense) / priceYen) * 100;
+
+        const depInfo = calcDepreciationInfo(structure, age);
+        const depreciationAnnual = buildingPriceYen / depInfo.years;
+        const initialCostYen = priceYen * initialCostRate;
+        const loanInterestAnnual = loanAmountYen * interestRate;
+
+        const accountingIncome = annualRent * (1 - vacancyRate);
+        const accountingExpenseNormal = (annualRent * expenseRate) + depreciationAnnual + loanInterestAnnual;
+        const accountingProfitNormal = accountingIncome - accountingExpenseNormal;
+        const accountingProfitFirst = accountingProfitNormal - initialCostYen; 
+
+        let salaryDeduction = 0;
+        if (salaryYen <= 1625000) salaryDeduction = 550000;
+        else if (salaryYen <= 1800000) salaryDeduction = salaryYen * 0.4 - 100000;
+        else if (salaryYen <= 3600000) salaryDeduction = salaryYen * 0.3 + 80000;
+        else if (salaryYen <= 6600000) salaryDeduction = salaryYen * 0.2 + 440000;
+        else if (salaryYen <= 8500000) salaryDeduction = salaryYen * 0.1 + 1100000;
+        else salaryDeduction = 1950000;
+        
+        const salaryIncome = salaryYen - salaryDeduction;
+        const socialInsurance = salaryYen * CONSTANTS.socialInsuranceRate;
+        const basicDeduction = 480000;
+        const spouseDeduction = hasSpouse ? 380000 : 0;
+        const dependentDeduction = dependentsNum * 380000;
+        const totalDeduction = socialInsurance + basicDeduction + spouseDeduction + dependentDeduction;
+
+        const taxableSalary = Math.max(salaryIncome - totalDeduction, 0);
+        const taxBase = calcIncomeTax(taxableSalary);
+        const residentTaxBase = Math.floor(taxableSalary * CONSTANTS.residentTaxRate);
+        const taxableMergedFirst = Math.max(taxableSalary + accountingProfitFirst, 0);
+        const taxFirst = calcIncomeTax(taxableMergedFirst);
+        const residentTaxFirst = Math.floor(taxableMergedFirst * CONSTANTS.residentTaxRate);
+        const taxableMergedNormal = Math.max(taxableSalary + accountingProfitNormal, 0);
+        const taxNormal = calcIncomeTax(taxableMergedNormal);
+        const residentTaxNormal = Math.floor(taxableMergedNormal * CONSTANTS.residentTaxRate);
+
+        const totalBenefitFirst = (taxBase.tax - taxFirst.tax) + (residentTaxBase - residentTaxFirst);
+        const totalBenefitNormal = (taxBase.tax - taxNormal.tax) + (residentTaxBase - residentTaxNormal);
+
+        const principalRepayed = (loanAmountYen / loanYears) * depInfo.years;
+        const remainingLoan = Math.max(loanAmountYen - principalRepayed, 0);
+        const landPrice = priceYen - buildingPriceYen;
+        const capitalGain = sellPriceYen - landPrice; 
+        let transferTax = 0;
+        if (capitalGain > 0) {
+            transferTax = Math.floor(capitalGain * CONSTANTS.transferTaxRate);
+        }
+        const exitCash = sellPriceYen - remainingLoan - transferTax;
+
+        const totalCF = annualCashFlow * depInfo.years;
+        const totalTaxBenefit = totalBenefitFirst + (totalBenefitNormal * (depInfo.years - 1));
+        const totalProfit = totalCF + totalTaxBenefit + exitCash - ownMoneyYen;
+
+        // --- Render ---
+        const heroValEl = document.getElementById(prefix === "main_" ? "hero_total_val" : "cmp_hero_total_val");
+        heroValEl.innerText = (totalProfit >= 0 ? "+" : "") + fmt(totalProfit) + " 円";
+        heroValEl.className = "hero-val " + (totalProfit >= 0 ? "" : "minus");
+
+        const resultDiv = document.getElementById(prefix === "main_" ? "result-main" : "result-compare");
+        const isRateDownFirst = taxBase.rate > taxFirst.rate;
+        const rateDownMsgFirst = isRateDownFirst ? `<span class="val-warn">★ランクダウン達成! (${(taxBase.rate*100).toFixed(0)}%→${(taxFirst.rate*100).toFixed(0)}%)</span>` : "";
+        const isRateDownNormal = taxBase.rate > taxNormal.rate;
+        const rateDownMsgNormal = isRateDownNormal ? `<span class="val-warn">★ランクダウン達成! (${(taxBase.rate*100).toFixed(0)}%→${(taxNormal.rate*100).toFixed(0)}%)</span>` : "";
+
+        const renderTaxDetail = (baseT, targetT, resBase, resTarget, mergedIncome, isRateDown, msg) => `
+            <div class="formula-line"><strong>[所得税]</strong> ${isRateDown ? msg : ''}</div>
+            <div class="formula-line"><span>本来:</span> <span>(課税所得${fmt(taxableSalary/10000)}万 × ${(baseT.rate*100).toFixed(0)}% - 控除${fmt(baseT.deduction)}) × 1.021 ≒ ${fmt(baseT.tax)}</span></div>
+            <div class="formula-line"><span style="color:red">－</span> <span>対策後:</span> <span>(課税所得${fmt(mergedIncome/10000)}万 × ${(targetT.rate*100).toFixed(0)}% - 控除${fmt(targetT.deduction)}) × 1.021 ≒ ${fmt(targetT.tax)}</span></div>
+            <div class="formula-result">差引: ${fmt(baseT.tax - targetT.tax)} 円</div>
+            <hr style="margin:5px 0; border-top:1px dashed #ccc;">
+            <div class="formula-line"><strong>[住民税]</strong> (一律10%)</div>
+            <div class="formula-line"><span>本来 ${fmt(resBase)}</span> <span style="color:red">－</span> <span>対策後 ${fmt(resTarget)}</span></div>
+            <div class="formula-result">差引: ${fmt(resBase - resTarget)} 円</div>
+            <div style="text-align:right; margin-top:5px; font-weight:bold; color:blue;">合計: ${fmt((baseT.tax - targetT.tax) + (resBase - resTarget))} 円</div>
+        `;
+
+        const transferDetail = `
+            <div class="formula-line">売却益 = 売却額${fmt(sellPriceYen)} - (土地${fmt(landPrice)} + 建物1円)</div>
+            <div class="formula-line">= ${fmt(capitalGain)} 円</div>
+            <div class="formula-line">税額 = ${fmt(capitalGain)} × 20.315%</div>
+            <div class="formula-result">= ${fmt(transferTax)} 円</div>
+        `;
+
+        const exitCashDetail = `
+            <div class="formula-line">売却額: ${fmt(sellPriceYen)}</div>
+            <div class="formula-line"><span style="color:red">－</span> ローン残債: ${fmt(remainingLoan)} (概算)</div>
+            <div class="formula-line"><span style="color:red">－</span> 譲渡税: ${fmt(transferTax)}</div>
+            <div class="formula-result">= ${fmt(exitCash)} 円</div>
+        `;
+
+        const totalDetail = `
+            <div class="breakdown-list">
+                <div class="breakdown-row"><span>1. 保有中CF累計:</span> <span class="${totalCF>=0?'val-pos':'val-neg'}">${fmt(totalCF)}</span></div>
+                <div class="breakdown-row"><span>2. 節税メリット総額:</span> <span class="val-pos">+${fmt(totalTaxBenefit)}</span></div>
+                <div class="breakdown-row"><span>3. 売却手残り:</span> <span class="val-pos">+${fmt(exitCash)}</span></div>
+                <div class="breakdown-row"><span>4. 当初自己資金:</span> <span class="val-neg">-${fmt(ownMoneyYen)}</span></div>
+                <div class="breakdown-total">合計: ${fmt(totalProfit)} 円</div>
+            </div>
+        `;
+
+        let html = `
+            <div class="result-box">
+                <div class="result-section">
+                    <div class="result-title">💰 物件収支・ローン</div>
+                    <div class="row"><span>月々ローン返済額</span> <span>${fmt(monthlyPayment)} 円</span></div>
+                    <div class="row"><span>年間ローン返済額</span> <span>${fmt(annualPayment)} 円</span></div>
+                    <div class="row"><span>年間家賃収入</span> <span>${fmt(annualRent)} 円</span></div>
+                    <div class="row"><span>年間支出 (返済+諸経費)</span> <span>${fmt(annualCashOut)} 円</span></div>
+                    <div class="row" style="background:#f0f8ff; padding:5px;"><span>年間手残り(税引前)</span> <span class="${annualCashFlow>=0?'val-pos':'val-neg'}">${fmt(annualCashFlow)} 円</span></div>
+                    <div class="row"><span>表面 / 実質利回り</span> <span>${surfaceYield.toFixed(1)}% / ${realYield.toFixed(1)}%</span></div>
+                    <div class="row"><span>減価償却期間</span> <span>${depInfo.years}年</span></div>
+                    <div class="note">計算式: ${depInfo.formula}</div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-title">📉 節税メリット</div>
+                    
+                    <div class="row">
+                        <span>初年度 節税メリット</span> 
+                        <span>
+                            <span class="val-pos">+${fmt(totalBenefitFirst)} 円</span>
+                            <button class="btn-detail" onclick="toggleDetails(this)">[計算式を見る]</button>
+                            <div class="detail-content">
+                                ${renderTaxDetail(taxBase, taxFirst, residentTaxBase, residentTaxFirst, taxableMergedFirst, isRateDownFirst, rateDownMsgFirst)}
+                            </div>
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>2年目〜 節税メリット/年</span> 
+                        <span>
+                            <span class="val-pos">+${fmt(totalBenefitNormal)} 円</span>
+                            <button class="btn-detail" onclick="toggleDetails(this)">[計算式を見る]</button>
+                            <div class="detail-content">
+                                ${renderTaxDetail(taxBase, taxNormal, residentTaxBase, residentTaxNormal, taxableMergedNormal, isRateDownNormal, rateDownMsgNormal)}
+                            </div>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-title">🚪 出口戦略 (保有${depInfo.years}年・※減価償却最終年での売却)</div>
+                    <div class="row"><span>物件売却時 想定価格</span> <span>${fmt(sellPriceYen)} 円</span></div>
+                    <div class="row">
+                        <span>売却時 譲渡税(約20%)</span> 
+                        <span>
+                            <span class="val-neg">▲${fmt(transferTax)} 円</span>
+                            <button class="btn-detail" onclick="toggleDetails(this)">[計算式を見る]</button>
+                            <div class="detail-content">${transferDetail}</div>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <span>売却時 手残り現金</span> 
+                        <span>
+                            <span class="val-pos">${fmt(exitCash)} 円</span>
+                            <button class="btn-detail" onclick="toggleDetails(this)">[計算式を見る]</button>
+                            <div class="detail-content">${exitCashDetail}</div>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="total-profit-footer">
+                    <div>🏆 トータル最終損益</div>
+                    <div class="total-val-footer ${totalProfit>=0?'':'minus'}">${totalProfit>=0?'+':''}${fmt(totalProfit)} 円</div>
+                    <div style="font-size:0.8em; color:#555;">(保有中CF + 節税総額 + 売却益 - 自己資金)</div>
+                    ${totalDetail}
+                </div>
+            </div>
+        `;
+        resultDiv.innerHTML = html;
+    }
+
+    function toggleCompare() {
+        document.getElementById("main-container").classList.toggle("show-compare");
+        const wrapper = document.getElementById("sim-wrapper");
+        wrapper.classList.toggle("show-compare");
+    }
+
+    function copyMainToCompare() {
+        inputsConfig.forEach(section => {
+            section.fields.forEach(field => {
+                const mainEl = document.getElementById("main_" + field.id);
+                const cmpEl = document.getElementById("cmp_" + field.id);
+                if (!mainEl || !cmpEl) return;
+                if(field.type === "checkbox" || field.type === "checkbox_inline") cmpEl.checked = mainEl.checked;
+                else cmpEl.value = mainEl.value;
+            });
+        });
+        calculate("cmp_");
+    }
+
+    function saveData() {
+        const data = {};
+        inputsConfig.forEach(section => {
+            section.fields.forEach(field => {
+                const el = document.getElementById("main_" + field.id);
+                if (el) data[field.id] = (field.type === "checkbox" || field.type === "checkbox_inline") ? el.checked : el.value;
+            });
+        });
+        localStorage.setItem("realEstateSimData_Pro_FinalDesign", JSON.stringify(data));
+        alert("設定を保存しました。");
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem("realEstateSimData_Pro_FinalDesign");
+        if (saved) {
+            const data = JSON.parse(saved);
+            Object.keys(data).forEach(key => {
+                const el = document.getElementById("main_" + key);
+                if (el) {
+                    if(el.type === "checkbox") el.checked = data[key];
+                    else el.value = data[key];
+                }
+            });
+        }
+        calculate("main_");
+        calculate("cmp_");
+    }
+    
+    function copyUrl() {
+        navigator.clipboard.writeText("https://amex-mile-simulation.com"); // 実際のURLに合わせて変更可能
+        alert("URLをコピーしました！");
+    }
+
+    window.onload = loadData;
+
+</script>
+</body>
+</html>
