@@ -8,8 +8,8 @@
     <style>
         :root {
             /* --- テーマカラー設定 (Ultra High Contrast Navy) --- */
-            /* 2倍強化: 光源(#94a3b8) → メイン(#0f172a) → 漆黒(#000000) */
-            --bg-gradient: radial-gradient(circle at 50% -10%, #94a3b8 0%, #0f172a 45%, #000000 90%);
+            /* グラデーション円を大きく: radial-gradientのサイズを拡張 */
+            --bg-gradient: radial-gradient(120% 120% at 50% 0%, #64748b 0%, #0f172a 60%, #000000 100%);
             
             /* グラスモーフィズム */
             --glass-bg: rgba(255, 255, 255, 0.65); 
@@ -125,12 +125,12 @@
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(15px);
             border-radius: 16px;
-            padding: 30px 25px;
+            padding: 30px 20px; /* 横パディングを少し調整 */
             border: 1px solid rgba(255,255,255,0.6);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
-            gap: 15px; /* 要素間の隙間 */
+            gap: 15px;
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
         }
@@ -163,18 +163,29 @@
         .promo-main-text {
             display: block;
             color: var(--amex-blue);
-            font-weight: 800; /* 極太 */
-            font-size: 1.35em; /* ほどよい大きさ */
-            line-height: 1.35;
+            font-weight: 800; 
+            font-size: 1.35em; /* 1行目のサイズ */
+            line-height: 1.4;
             text-shadow: 0 1px 2px rgba(0,111,207,0.1);
+        }
+        /* 2行目：サイズを調整して1行に収める */
+        .promo-main-text-large {
+            display: block;
+            color: var(--amex-blue);
+            font-weight: 800; 
+            font-size: 1.35em; /* フォントサイズを縮小して1行化 */
+            line-height: 1.4;
+            text-shadow: 0 1px 2px rgba(0,111,207,0.1);
+            white-space: nowrap; /* 改行禁止 */
         }
         /* 小さい補足テキスト */
         .promo-sub-text {
             display: block;
-            font-size: 0.9em;
+            font-size: 0.85em; /* サイズ調整 */
             color: #475569;
             margin-top: 12px;
             font-weight: bold;
+            white-space: nowrap; /* 改行禁止 */
         }
 
         .btn-amex {
@@ -326,8 +337,8 @@
                 </div>
                 <div class="promo-card-text">
                     <span class="promo-main-text">不動産投資は</span>
-                    <span class="promo-main-text">カード入会特典<br>ゲットのチャンス</span>
-                    <span class="promo-sub-text">初期費用の支払いで<br>一気にポイント獲得！</span>
+                    <span class="promo-main-text-large">カード入会特典ゲットのチャンス</span>
+                    <span class="promo-sub-text">初期費用の支払いで一気にポイント獲得！</span>
                 </div>
                 <a href="https://amex-mile-simulation.com/" target="_blank" class="btn-amex">
                     損益シミュレーションへ ＞
@@ -715,11 +726,11 @@
                 if (el) data[field.id] = (field.type === "checkbox" || field.type === "checkbox_inline") ? el.checked : el.value;
             });
         });
-        localStorage.setItem("realEstateSimData_Pro_UltraContrast", JSON.stringify(data));
+        localStorage.setItem("realEstateSimData_Pro_Final_Ultra_Fix", JSON.stringify(data));
         alert("設定を保存しました。");
     }
     function loadData() {
-        const saved = localStorage.getItem("realEstateSimData_Pro_UltraContrast");
+        const saved = localStorage.getItem("realEstateSimData_Pro_Final_Ultra_Fix");
         if (saved) {
             const data = JSON.parse(saved);
             Object.keys(data).forEach(key => {
