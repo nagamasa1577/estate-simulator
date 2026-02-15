@@ -64,6 +64,7 @@
             padding: 20px;
             min-height: 100vh;
             line-height: 1.6;
+            padding-top: 20px; /* 初期状態 */
         }
 
         /* --- タイトルのデザイン化 --- */
@@ -113,10 +114,12 @@
             display: flex;
             flex-direction: column;
             gap: 25px;
+            /* ★修正: 上部固定バー(約70px)を避けるため top を調整 */
             position: -webkit-sticky;
             position: sticky;
-            top: 20px;
+            top: 90px; 
             height: fit-content;
+            transition: top 0.3s;
         }
 
         /* 中央カラム */
@@ -281,7 +284,7 @@
             .simulator-wrapper.show-compare #sim-compare { width: 100%; border-left: none; border-top: 3px dotted var(--accent); padding-left: 0; padding-top: 30px; }
         }
 
-        /* ヒーローエリア */
+        /* ヒーローエリア (ページ内埋め込み) */
         .hero-section {
             background-color: var(--hero-bg);
             border: 3px solid var(--accent);
@@ -295,6 +298,67 @@
         .hero-val { font-size: 3em; font-weight: 900; color: var(--hero-text); margin: 5px 0; letter-spacing: -1px; line-height: 1.2; text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .hero-val.minus { color: var(--danger); }
         .hero-note { font-size: 0.85em; color: #666; }
+
+        /* ★新機能: スクロール追従バー (Sticky Bar) */
+        #sticky-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            padding: 10px 20px;
+            transform: translateY(-100%); /* 初期は隠す */
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            border-bottom: 1px solid #ccc;
+        }
+        #sticky-bar.visible {
+            transform: translateY(0); /* 表示 */
+        }
+        
+        .sticky-content {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+            justify-content: center;
+        }
+        
+        .sticky-item {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .sticky-label {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #555;
+        }
+        .sticky-val {
+            font-weight: 900;
+            color: var(--hero-text);
+            font-size: 1.3em;
+        }
+        .sticky-val.minus { color: var(--danger); }
+        .sticky-item.cmp .sticky-val { color: #e67e22; } /* 比較用色 */
+
+        /* スマホ用最適化 (Sticky Bar) */
+        @media (max-width: 768px) {
+            #sticky-bar { padding: 8px 10px; }
+            .sticky-content { justify-content: space-around; gap: 5px; }
+            .sticky-item { flex-direction: column; align-items: center; gap: 0; line-height: 1.2; }
+            .sticky-label { font-size: 0.7em; }
+            .sticky-val { font-size: 1.1em; }
+        }
 
         /* UIパーツ */
         .accordion { cursor: pointer; padding: 15px 20px; width: 100%; border: none; text-align: left; outline: none; font-size: 16px; background-color: #f1f5f9; color: #334155; font-weight: bold; margin-top: 15px; border-radius: 8px; display: flex; justify-content: space-between; box-sizing: border-box; transition: background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -346,6 +410,19 @@
     </style>
 </head>
 <body>
+
+    <div id="sticky-bar">
+        <div class="sticky-content">
+            <div class="sticky-item">
+                <span class="sticky-label">🏆 最終損益(A):</span>
+                <span id="sticky-val-main" class="sticky-val">--- 円</span>
+            </div>
+            <div id="sticky-item-cmp" class="sticky-item cmp" style="display:none;">
+                <span class="sticky-label">🏆 最終損益(B):</span>
+                <span id="sticky-val-cmp" class="sticky-val">--- 円</span>
+            </div>
+        </div>
+    </div>
 
     <div class="title-container">
         <h1 class="title-capsule">✨ 不動産投資・節税シミュレーション ✨</h1>
@@ -595,7 +672,7 @@
         const accountingExpenseNormal = (annualRent * expenseRate) + depreciationAnnual + loanInterestAnnual;
         const accountingProfitNormal = accountingIncome - accountingExpenseNormal;
         
-        // ★修正: 初年度諸経費の60%のみを経費化（資産計上分を除外）
+        // ★修正: 初年度諸経費の60%のみを経費化
         const accountingProfitFirst = accountingProfitNormal - (initialCostYen * 0.6); 
         
         const accountingExpenseNoDep = (annualRent * expenseRate) + loanInterestAnnual;
@@ -674,6 +751,13 @@
         const heroValEl = document.getElementById(prefix === "main_" ? "hero_total_val" : "cmp_hero_total_val");
         heroValEl.innerText = (totalProfit >= 0 ? "+" : "") + fmt(totalProfit) + " 円";
         heroValEl.className = "hero-val " + (totalProfit >= 0 ? "" : "minus");
+
+        // ★追従バーの値も更新
+        const stickyValEl = document.getElementById(prefix === "main_" ? "sticky-val-main" : "sticky-val-cmp");
+        if(stickyValEl) {
+            stickyValEl.innerText = (totalProfit >= 0 ? "+" : "") + fmt(totalProfit) + " 円";
+            stickyValEl.className = "sticky-val " + (totalProfit >= 0 ? "" : "minus");
+        }
 
         const resultDiv = document.getElementById(prefix === "main_" ? "result-main" : "result-compare");
         const isRateDownFirst = taxBase.rate > taxFirst.rate;
@@ -804,7 +888,18 @@
         resultDiv.innerHTML = html;
     }
 
-    function toggleCompare() { document.getElementById("sim-wrapper").classList.toggle("show-compare"); }
+    function toggleCompare() { 
+        document.getElementById("sim-wrapper").classList.toggle("show-compare"); 
+        
+        // 比較モードのStickyバー表示制御
+        const stickyCmp = document.getElementById("sticky-item-cmp");
+        if (document.getElementById("sim-wrapper").classList.contains("show-compare")) {
+            stickyCmp.style.display = "flex";
+        } else {
+            stickyCmp.style.display = "none";
+        }
+    }
+
     function copyMainToCompare() {
         inputsConfig.forEach(section => {
             section.fields.forEach(field => {
@@ -825,11 +920,11 @@
                 if (el) data[field.id] = (field.type === "checkbox" || field.type === "checkbox_inline") ? el.checked : el.value;
             });
         });
-        localStorage.setItem("realEstateSimData_Pro_Final_Integer", JSON.stringify(data));
+        localStorage.setItem("realEstateSimData_Pro_Final_Realistic_Plus", JSON.stringify(data));
         alert("設定を保存しました。");
     }
     function loadData() {
-        const saved = localStorage.getItem("realEstateSimData_Pro_Final_Integer");
+        const saved = localStorage.getItem("realEstateSimData_Pro_Final_Realistic_Plus");
         if (saved) {
             const data = JSON.parse(saved);
             Object.keys(data).forEach(key => {
@@ -843,11 +938,27 @@
         calculate("main_");
         calculate("cmp_");
     }
-    // ★修正: 正しいURLをコピーするように変更
     function copyUrl() {
         navigator.clipboard.writeText("https://estate-simulator-rouge.vercel.app/");
         alert("URLをコピーしました！");
     }
+
+    // ★スクロール追従ロジック
+    window.addEventListener('scroll', function() {
+        const stickyBar = document.getElementById('sticky-bar');
+        const heroSection = document.getElementById('hero-main');
+        
+        // ヒーローセクションの下端を過ぎたらバーを表示
+        if (heroSection) {
+            const heroBottom = heroSection.getBoundingClientRect().bottom;
+            if (heroBottom < 0) {
+                stickyBar.classList.add('visible');
+            } else {
+                stickyBar.classList.remove('visible');
+            }
+        }
+    });
+
     window.onload = loadData;
 </script>
 </body>
