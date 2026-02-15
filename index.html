@@ -3,12 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>不動産投資・節税シミュレーション</title>
+    
+    <meta name="description" content="年収・物件価格を入れるだけで、不動産投資の節税効果と最終的な手残り金額を瞬時に計算。クレジットカードのマイル獲得シミュレーションも。登録不要で今すぐ無料で使えます。">
+
+    <link rel="canonical" href="https://estate-simulator-rouge.vercel.app">
+
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <meta property="og:title" content="不動産投資・節税シミュレーション">
+    <meta property="og:description" content="年収・物件価格を入れるだけで、不動産投資の節税効果と最終的な手残り金額を瞬時に計算。クレジットカードのマイル獲得シミュレーションも。登録不要で今すぐ無料で使えます。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://estate-simulator-rouge.vercel.app">
+    <meta property="og:image" content="https://estate-simulator-rouge.vercel.app/OGP_image.jpeg">
+    <meta property="og:site_name" content="不動産 節税 シミュレーション">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="不動産投資・節税シミュレーション">
+    <meta name="twitter:description" content="年収・物件価格を入れるだけで、不動産投資の節税効果と最終的な手残り金額を瞬時に計算。">
+    <meta name="twitter:image" content="https://estate-simulator-rouge.vercel.app/OGP_image.jpeg">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "不動産 節税 シミュレーション",
+      "alternateName": "estate-simulator",
+      "url": "https://estate-simulator-rouge.vercel.app",
+      "description": "年収・物件価格を入れるだけで、不動産投資の節税効果と最終的な手残り金額を瞬時に計算。",
+      "image": "https://estate-simulator-rouge.vercel.app/favicon.png"
+    }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             /* --- テーマカラー設定 (Ultra High Contrast Navy) --- */
-            /* グラデーション円を大きく: radial-gradientのサイズを拡張 */
             --bg-gradient: radial-gradient(120% 120% at 50% 0%, #64748b 0%, #0f172a 60%, #000000 100%);
             
             /* グラスモーフィズム */
@@ -50,7 +81,6 @@
             font-size: 28px;
             font-weight: 700;
             letter-spacing: 2px;
-            /* ガラスカプセル風デザイン */
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -120,7 +150,7 @@
             margin-bottom: 20px;
         }
 
-        /* --- 左カラムバナー (カード画像＆テキスト) --- */
+        /* --- 左カラムバナー --- */
         .promo-card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(15px);
@@ -154,7 +184,6 @@
             background: #fff;
         }
 
-        /* --- バナーテキスト --- */
         .promo-card-text {
             line-height: 1.4;
             margin: 0;
@@ -745,8 +774,9 @@
         calculate("main_");
         calculate("cmp_");
     }
+    // ★修正: 正しいURLをコピーするように変更
     function copyUrl() {
-        navigator.clipboard.writeText("https://amex-mile-simulation.com");
+        navigator.clipboard.writeText("https://estate-simulator-rouge.vercel.app/");
         alert("URLをコピーしました！");
     }
     window.onload = loadData;
