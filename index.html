@@ -5,28 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>不動産投資・節税シミュレーション</title>
-    
     <meta name="description" content="年収・物件価格を入れるだけで、不動産投資の節税効果と最終的な手残り金額を瞬時に計算。クレジットカードのマイル獲得シミュレーションも。登録不要で今すぐ無料で使えます。">
-
     <link rel="canonical" href="https://estate-simulator-rouge.vercel.app">
-
     <meta name="google-site-verification" content="9Wwpjr-RR0H1MVVsxu0GMTlAgrBIcVky30RTvxsn7dY" />
-
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="apple-touch-icon" href="favicon.png">
-
     <meta property="og:title" content="不動産投資・節税シミュレーション">
     <meta property="og:description" content="年収・物件価格を入れるだけで、不動産投資の節税効果と最終的な手残り金額を瞬時に計算。クレジットカードのマイル獲得シミュレーションも。登録不要で今すぐ無料で使えます。">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://estate-simulator-rouge.vercel.app">
     <meta property="og:image" content="https://estate-simulator-rouge.vercel.app/OGP_image.jpeg">
     <meta property="og:site_name" content="不動産 節税 シミュレーション">
-
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="不動産投資・節税シミュレーション">
     <meta name="twitter:description" content="年収・物件価格を入れるだけで、不動産投資の節税効果と最終的な手残り金額を瞬時に計算。">
     <meta name="twitter:image" content="https://estate-simulator-rouge.vercel.app/OGP_image.jpeg">
-
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -38,6 +31,7 @@
       "image": "https://estate-simulator-rouge.vercel.app/favicon.png"
     }
     </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -109,16 +103,21 @@
             margin: 0 auto;
             display: flex;
             gap: 30px;
-            align-items: flex-start;
+            align-items: flex-start; /* Stickyにはこれが重要 */
         }
 
-        /* 左カラム */
+        /* 左カラム (★修正: Sticky追従設定) */
         .col-left {
             width: 380px; 
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
             gap: 25px;
+            /* 追従設定 */
+            position: -webkit-sticky; /* Safari用 */
+            position: sticky;
+            top: 20px; /* 上端から20pxの位置で止まる */
+            height: fit-content; /* 中身の高さに合わせる */
         }
 
         /* 中央カラム */
@@ -135,7 +134,11 @@
 
         @media (max-width: 1100px) {
             .layout-wrapper { flex-direction: column; }
-            .col-left { width: 100%; order: 2; }
+            .col-left { 
+                width: 100%; 
+                order: 2; 
+                position: static; /* スマホでは追従解除 */
+            }
             .col-center { width: 100%; order: 1; }
             .promo-card { align-items: center; text-align: center; }
         }
@@ -428,7 +431,7 @@
 
 <script>
     /* =========================================
-       ロジック (変更なし)
+       ロジック (元利均等・5年ルール追加版)
        ========================================= */
     const CONSTANTS = { residentTaxRate: 0.10, reconstructionTaxRate: 0.021, transferTaxRate: 0.20315, socialInsuranceRate: 0.15 };
     const INCOME_TAX_BRACKETS = [ { limit: 1950000, rate: 0.05, deduction: 0 }, { limit: 3300000, rate: 0.10, deduction: 97500 }, { limit: 6950000, rate: 0.20, deduction: 427500 }, { limit: 9000000, rate: 0.23, deduction: 636000 }, { limit: 18000000, rate: 0.33, deduction: 1536000 }, { limit: 40000000, rate: 0.40, deduction: 2796000 }, { limit: Infinity, rate: 0.45, deduction: 4796000 } ];
@@ -535,13 +538,10 @@
         const initialCostVal = price * initialCostRate;
         const totalCostVal = price + initialCostVal; 
         
-        // ★修正: 整数表示（四捨五入）
         setVal(prefix + "total_cost", Math.round(totalCostVal)); 
         setVal(prefix + "required_fund", Math.round(totalCostVal)); 
 
         const ownMoney = getVal(prefix + "own_money");
-        
-        // ★修正: 借入金額も整数計算
         let loanAmountCalc = Math.round(totalCostVal) - ownMoney;
         if (loanAmountCalc < 0) loanAmountCalc = 0;
         setVal(prefix + "loan_amount", loanAmountCalc);
@@ -563,11 +563,17 @@
         const dependentsNum = Number(document.getElementById(prefix + "dependents").value);
         const sellPriceYen = getVal(prefix + "sell_price") * 10000;
 
+        // ★修正: 元利均等返済 (PMT)
         const monthlyRate = interestRate / 12;
         const numPayments = loanYears * 12;
         let monthlyPayment = 0;
-        if (interestRate > 0 && loanAmountYen > 0) { monthlyPayment = loanAmountYen * monthlyRate * Math.pow(1 + monthlyRate, numPayments) / (Math.pow(1 + monthlyRate, numPayments) - 1); } 
-        else if (loanAmountYen > 0) { monthlyPayment = loanAmountYen / numPayments; }
+        if (loanAmountYen > 0) {
+            if (interestRate > 0) {
+                monthlyPayment = loanAmountYen * monthlyRate * Math.pow(1 + monthlyRate, numPayments) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            } else {
+                monthlyPayment = loanAmountYen / numPayments;
+            }
+        }
         const annualPayment = monthlyPayment * 12;
         const annualRent = rentMonthlyYen * 12;
         const annualOperatingExpense = annualRent * (vacancyRate + expenseRate);
@@ -577,14 +583,28 @@
         const realYield = ((annualRent - annualOperatingExpense) / priceYen) * 100;
 
         const depInfo = calcDepreciationInfo(structure, age);
+        
+        // ★修正: 5年ルールの適用（6年目まで強制延長）
+        let holdingYears = depInfo.years;
+        let isExtended = false;
+        if (holdingYears <= 5) {
+            holdingYears = 6;
+            isExtended = true;
+        }
+
         const depreciationAnnual = buildingPriceYen / depInfo.years;
         const initialCostYen = priceYen * initialCostRate;
-        const loanInterestAnnual = loanAmountYen * interestRate;
+        const loanInterestAnnual = loanAmountYen * interestRate; // 概算金利（初年度ベース）
 
         const accountingIncome = annualRent * (1 - vacancyRate);
+        // 通常の経費（償却あり）
         const accountingExpenseNormal = (annualRent * expenseRate) + depreciationAnnual + loanInterestAnnual;
         const accountingProfitNormal = accountingIncome - accountingExpenseNormal;
+        // 初年度（諸経費あり）
         const accountingProfitFirst = accountingProfitNormal - initialCostYen; 
+        // 償却切れ後の経費（償却なし）
+        const accountingExpenseNoDep = (annualRent * expenseRate) + loanInterestAnnual;
+        const accountingProfitNoDep = accountingIncome - accountingExpenseNoDep;
 
         let salaryDeduction = 0;
         if (salaryYen <= 1625000) salaryDeduction = 550000;
@@ -604,25 +624,57 @@
         const taxableSalary = Math.max(salaryIncome - totalDeduction, 0);
         const taxBase = calcIncomeTax(taxableSalary);
         const residentTaxBase = Math.floor(taxableSalary * CONSTANTS.residentTaxRate);
+
+        // 各フェーズの税計算
+        // 1. 初年度
         const taxableMergedFirst = Math.max(taxableSalary + accountingProfitFirst, 0);
         const taxFirst = calcIncomeTax(taxableMergedFirst);
         const residentTaxFirst = Math.floor(taxableMergedFirst * CONSTANTS.residentTaxRate);
+        const totalBenefitFirst = (taxBase.tax - taxFirst.tax) + (residentTaxBase - residentTaxFirst);
+
+        // 2. 償却期間中（2年目〜）
         const taxableMergedNormal = Math.max(taxableSalary + accountingProfitNormal, 0);
         const taxNormal = calcIncomeTax(taxableMergedNormal);
         const residentTaxNormal = Math.floor(taxableMergedNormal * CONSTANTS.residentTaxRate);
-
-        const totalBenefitFirst = (taxBase.tax - taxFirst.tax) + (residentTaxBase - residentTaxFirst);
         const totalBenefitNormal = (taxBase.tax - taxNormal.tax) + (residentTaxBase - residentTaxNormal);
 
-        const principalRepayed = (loanAmountYen / loanYears) * depInfo.years;
-        const remainingLoan = Math.max(loanAmountYen - principalRepayed, 0);
+        // 3. 償却切れ後（デッドクロス期間）
+        const taxableMergedNoDep = Math.max(taxableSalary + accountingProfitNoDep, 0);
+        const taxNoDep = calcIncomeTax(taxableMergedNoDep);
+        const residentTaxNoDep = Math.floor(taxableMergedNoDep * CONSTANTS.residentTaxRate);
+        const totalBenefitNoDep = (taxBase.tax - taxNoDep.tax) + (residentTaxBase - residentTaxNoDep); // マイナスになる可能性大
+
+        // ★修正: 元利均等返済の残債計算
+        // 残債 = P * ((1+r)^n - (1+r)^m) / ((1+r)^n - 1)
+        let remainingLoan = 0;
+        const monthsElapsed = holdingYears * 12;
+        if (loanAmountYen > 0) {
+            if (monthsElapsed >= numPayments) {
+                remainingLoan = 0;
+            } else if (interestRate > 0) {
+                remainingLoan = loanAmountYen * (Math.pow(1 + monthlyRate, numPayments) - Math.pow(1 + monthlyRate, monthsElapsed)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            } else {
+                remainingLoan = loanAmountYen - (monthlyPayment * monthsElapsed);
+            }
+        }
+
         const landPrice = priceYen - buildingPriceYen;
         const capitalGain = sellPriceYen - landPrice; 
         let transferTax = 0; if (capitalGain > 0) { transferTax = Math.floor(capitalGain * CONSTANTS.transferTaxRate); }
         const exitCash = sellPriceYen - remainingLoan - transferTax;
 
-        const totalCF = annualCashFlow * depInfo.years;
-        const totalTaxBenefit = totalBenefitFirst + (totalBenefitNormal * (depInfo.years - 1));
+        // トータルCF計算（期間分割）
+        const totalCF = annualCashFlow * holdingYears;
+        
+        // トータル節税額計算（期間分割）
+        let totalTaxBenefit = totalBenefitFirst; // 1年目
+        if (depInfo.years >= 2) {
+            totalTaxBenefit += totalBenefitNormal * (depInfo.years - 1); // 2〜償却終了まで
+        }
+        if (holdingYears > depInfo.years) {
+            totalTaxBenefit += totalBenefitNoDep * (holdingYears - depInfo.years); // 償却終了後〜売却まで（マイナス税務）
+        }
+
         const totalProfit = totalCF + totalTaxBenefit + exitCash - ownMoneyYen;
 
         const heroValEl = document.getElementById(prefix === "main_" ? "hero_total_val" : "cmp_hero_total_val");
@@ -656,15 +708,15 @@
 
         const exitCashDetail = `
             <div class="formula-line">売却額: ${fmt(sellPriceYen)}</div>
-            <div class="formula-line"><span style="color:red">－</span> ローン残債: ${fmt(remainingLoan)} (概算)</div>
+            <div class="formula-line"><span style="color:red">－</span> ローン残債(元利均等): ${fmt(remainingLoan)}</div>
             <div class="formula-line"><span style="color:red">－</span> 譲渡税: ${fmt(transferTax)}</div>
             <div class="formula-result">= ${fmt(exitCash)} 円</div>
         `;
 
         const totalDetail = `
             <div class="breakdown-list">
-                <div class="breakdown-row"><span>1. 保有中CF累計:</span> <span class="${totalCF>=0?'val-pos':'val-neg'}">${fmt(totalCF)}</span></div>
-                <div class="breakdown-row"><span>2. 節税メリット総額:</span> <span class="val-pos">+${fmt(totalTaxBenefit)}</span></div>
+                <div class="breakdown-row"><span>1. 保有中CF累計 (${holdingYears}年):</span> <span class="${totalCF>=0?'val-pos':'val-neg'}">${fmt(totalCF)}</span></div>
+                <div class="breakdown-row"><span>2. 節税メリット総額:</span> <span class="val-pos">${totalTaxBenefit>=0?'+':''}${fmt(totalTaxBenefit)}</span></div>
                 <div class="breakdown-row"><span>3. 売却手残り:</span> <span class="val-pos">+${fmt(exitCash)}</span></div>
                 <div class="breakdown-row"><span>4. 当初自己資金:</span> <span class="val-neg">-${fmt(ownMoneyYen)}</span></div>
                 <div class="breakdown-total">合計: ${fmt(totalProfit)} 円</div>
@@ -675,7 +727,7 @@
             <div class="result-box">
                 <div class="result-section">
                     <div class="result-title">💰 物件収支・ローン</div>
-                    <div class="row"><span>月々ローン返済額</span> <span>${fmt(monthlyPayment)} 円</span></div>
+                    <div class="row"><span>月々ローン返済額 (元利均等)</span> <span>${fmt(monthlyPayment)} 円</span></div>
                     <div class="row"><span>年間ローン返済額</span> <span>${fmt(annualPayment)} 円</span></div>
                     <div class="row"><span>年間家賃収入</span> <span>${fmt(annualRent)} 円</span></div>
                     <div class="row"><span>年間支出 (返済+諸経費)</span> <span>${fmt(annualCashOut)} 円</span></div>
@@ -703,10 +755,25 @@
                             <div class="detail-content">${renderTaxDetail(taxBase, taxNormal, residentTaxBase, residentTaxNormal, taxableMergedNormal, isRateDownNormal, rateDownMsgNormal)}</div>
                         </span>
                     </div>
+                    ${ holdingYears > depInfo.years ? 
+                    `<div class="row" style="color:#e67e22;">
+                        <span>※償却切れ後 (${depInfo.years+1}〜${holdingYears}年目)</span> 
+                        <span>
+                            <span class="val-neg">${fmt(totalBenefitNoDep)} 円/年</span>
+                            <div class="note" style="text-align:right;">(デッドクロス期間: 税金増)</div>
+                        </span>
+                    </div>` : '' }
                 </div>
 
                 <div class="result-section">
-                    <div class="result-title">🚪 出口戦略 (保有${depInfo.years}年・※減価償却最終年での売却)</div>
+                    <div class="result-title">🚪 出口戦略</div>
+                    <div class="row" style="border-bottom:1px solid #eee; padding-bottom:5px; margin-bottom:10px;">
+                        <span>推奨保有期間</span>
+                        <span style="text-align:right;">
+                            <strong style="font-size:1.2em;">${holdingYears}年</strong>
+                            ${isExtended ? '<br><span style="font-size:0.8em; color:#c0392b;">(※短期譲渡回避のため延長)</span>' : ''}
+                        </span>
+                    </div>
                     <div class="row"><span>物件売却時 想定価格</span> <span>${fmt(sellPriceYen)} 円</span></div>
                     <div class="row">
                         <span>売却時 譲渡税(約20%)</span> 
@@ -776,7 +843,6 @@
         calculate("main_");
         calculate("cmp_");
     }
-    // ★修正: 正しいURLをコピーするように変更
     function copyUrl() {
         navigator.clipboard.writeText("https://estate-simulator-rouge.vercel.app/");
         alert("URLをコピーしました！");
