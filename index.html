@@ -67,15 +67,9 @@
             padding-top: 20px;
         }
 
-        /* --- SEO対策用リセット (h2, h3等のデザイン調整) --- */
-        h2, h3 {
-            margin: 0;
-            padding: 0;
-            font-size: 100%;
-            font-weight: normal;
-        }
+        h2, h3 { margin: 0; padding: 0; font-size: 100%; font-weight: normal; }
 
-        /* --- タイトルのデザイン化 --- */
+        /* --- タイトル --- */
         .title-container {
             text-align: center;
             margin-bottom: 40px;
@@ -106,13 +100,21 @@
             }
         }
 
-        /* --- 3カラムレイアウト --- */
+        /* --- レイアウト構造 (スマホで順序入れ替え対応) --- */
+        /* 上部エリア（左カラム＋シミュレーター） */
         .layout-wrapper {
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
             gap: 30px;
             align-items: flex-start;
+        }
+        /* 下部エリア（SEO解説＋フッター） */
+        .bottom-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 410px; /* PC用インデント (左380px + gap30px) */
+            box-sizing: border-box;
         }
 
         /* 左カラム (Sticky追従) */
@@ -129,8 +131,8 @@
             transition: top 0.3s;
         }
 
-        /* 中央カラム */
-        .col-center {
+        /* 中央カラム（シミュレーターのみ） */
+        .col-center-top {
             flex: 1; 
             min-width: 0;
         }
@@ -141,11 +143,20 @@
             display: none;
         }
 
+        /* スマホ用レイアウト調整 */
         @media (max-width: 1100px) {
             .layout-wrapper { flex-direction: column; }
+            
+            /* 1. シミュレーターを先頭に */
+            .col-center-top { width: 100%; order: 1; }
+            
+            /* 2. 左カラム（バナー）を2番目に */
             .col-left { width: 100%; order: 2; position: static; }
-            .col-center { width: 100%; order: 1; }
+            
             .promo-card { align-items: center; text-align: center; }
+            
+            /* 3. 下部エリア（解説・フッター）は自然に3番目 */
+            .bottom-wrapper { padding-left: 0; margin-top: 20px; }
         }
 
         /* --- グラスモーフィズム共通パネル --- */
@@ -194,10 +205,7 @@
             background: #fff;
         }
 
-        .promo-card-text {
-            line-height: 1.4;
-            margin: 0;
-        }
+        .promo-card-text { line-height: 1.4; margin: 0; }
         .promo-main-text {
             display: block;
             color: var(--amex-blue);
@@ -206,7 +214,6 @@
             line-height: 1.4;
             text-shadow: 0 1px 2px rgba(0,111,207,0.1);
         }
-        /* SEO対策: h2タグとして定義しなおし、見た目は維持 */
         h2.promo-main-text-large {
             display: block;
             color: var(--amex-blue);
@@ -261,11 +268,7 @@
             color: #dce4ef;
             font-size: 0.85em;
         }
-        .link-icon {
-            font-size: 24px;
-            color: #94a3b8;
-            flex-shrink: 0;
-        }
+        .link-icon { font-size: 24px; color: #94a3b8; flex-shrink: 0; }
         .copy-btn {
             background: rgba(255,255,255,0.9);
             color: #333;
@@ -279,19 +282,6 @@
             width: 100%;
         }
         .copy-btn:hover { background: #fff; }
-
-        /* --- シミュレーター本体 --- */
-        .simulator-wrapper { display: flex; gap: 30px; transition: all 0.3s ease; }
-        .sim-col { width: 100%; transition: width 0.3s; }
-        #sim-compare { display: none; border-left: 3px dotted var(--accent); padding-left: 30px; }
-        .simulator-wrapper.show-compare #sim-main,
-        .simulator-wrapper.show-compare #sim-compare { width: 50%; display: block; }
-        
-        @media (max-width: 768px) {
-            .simulator-wrapper.show-compare { flex-direction: column; }
-            .simulator-wrapper.show-compare #sim-main,
-            .simulator-wrapper.show-compare #sim-compare { width: 100%; border-left: none; border-top: 3px dotted var(--accent); padding-left: 0; padding-top: 30px; }
-        }
 
         /* ヒーローエリア */
         .hero-section {
@@ -342,7 +332,7 @@
             .sticky-val { font-size: 1.1em; }
         }
 
-        /* UIパーツ (SEO: h3タグへ変更したアコーディオンのスタイル調整) */
+        /* UIパーツ */
         h3.accordion { cursor: pointer; padding: 15px 20px; width: 100%; border: none; text-align: left; outline: none; font-size: 16px; background-color: #f1f5f9; color: #334155; font-weight: bold; margin-top: 15px; border-radius: 8px; display: flex; justify-content: space-between; box-sizing: border-box; transition: background 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .active, h3.accordion:hover { background-color: #e2e8f0; }
         h3.accordion:after { content: '\002B'; font-weight: bold; float: right; margin-left: 5px; }
@@ -362,7 +352,6 @@
         .result-box { background: rgba(255,255,255,0.85); padding: 0; margin-top: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .result-section { margin-bottom: 30px; padding: 20px; border-bottom: 1px dashed #cbd5e1; }
         .result-section:last-child { border-bottom: none; }
-        /* SEO: h3タグ化したタイトルのスタイル */
         h3.result-title { font-size: 1.2em; font-weight: bold; color: var(--primary); margin-bottom: 15px; border-left: 5px solid var(--primary); padding-left: 15px; }
         .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 1em; }
         .val-pos { color: var(--amex-blue); font-weight: bold; }
@@ -391,7 +380,7 @@
         .breakdown-row:last-child { border-bottom: none; }
         .breakdown-total { text-align: right; font-weight: bold; margin-top: 12px; border-top: 2px solid #333; padding-top: 10px; font-size: 1.1em; }
 
-        /* --- SEO: 解説コンテンツエリア --- */
+        /* --- SEO: 解説コンテンツエリア（アコーディオン化） --- */
         #seo-content {
             background: rgba(255, 255, 255, 0.7);
             padding: 30px;
@@ -402,22 +391,89 @@
             border: 1px solid rgba(255,255,255,0.5);
         }
         #seo-content h2 { font-size: 1.4em; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-        #seo-content h3 { font-size: 1.1em; font-weight: bold; margin-top: 20px; margin-bottom: 10px; color: var(--primary); }
-        #seo-content p { margin-bottom: 15px; line-height: 1.7; }
+        #seo-content p.intro { margin-bottom: 25px; line-height: 1.7; font-weight: 500; }
 
-        /* --- SEO: フッター --- */
+        /* アコーディオン部分 */
+        .seo-accordion {
+            background-color: transparent;
+            cursor: pointer;
+            padding: 15px 0;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 1px dashed #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .seo-accordion:after { content: '\002B'; font-weight: bold; font-size: 1.2em; color: #777; margin-left: 10px; }
+        .seo-accordion.active:after { content: "\2212"; }
+        .seo-panel {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-bottom: 5px;
+        }
+        .seo-panel p { padding: 15px 0 5px 0; line-height: 1.7; margin: 0; }
+
+        /* --- フッター (シンプル＆モーダル) --- */
         #site-footer {
             margin-top: 50px;
-            padding: 20px;
-            background: #e2e8f0;
-            border-radius: 12px;
-            font-size: 0.8em;
+            padding: 30px 20px;
+            background: transparent;
+            text-align: center;
+            font-size: 0.9em;
             color: #64748b;
-            text-align: left;
         }
-        #site-footer h4 { font-size: 1em; font-weight: bold; margin-bottom: 10px; color: #475569; }
-        #site-footer ul { list-style: none; padding: 0; margin: 0; }
-        #site-footer li { margin-bottom: 5px; }
+        .footer-copy { display: block; margin-bottom: 10px; font-weight: bold; }
+        .footer-link {
+            color: #64748b;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .footer-link:hover { color: #333; }
+
+        /* モーダルウィンドウ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .close-modal:hover { color: #000; }
+        .modal-content h3 { font-size: 1.2em; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; }
+        .modal-content ul { list-style: disc; padding-left: 20px; margin-bottom: 20px; }
+        .modal-content li { margin-bottom: 8px; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -442,7 +498,6 @@
     <div class="layout-wrapper">
         
         <aside class="col-left">
-            
             <div class="promo-card">
                 <div class="promo-card-images">
                     <img src="card-platinum.jpg" alt="アメリカン・エキスプレス・プラチナ・カード 券面" class="promo-card-img">
@@ -458,7 +513,6 @@
                     損益シミュレーションへ ＞
                 </a>
             </div>
-
             <div class="link-policy">
                 <div class="link-icon">🔗</div>
                 <div style="flex:1;">
@@ -468,10 +522,9 @@
                     <button class="copy-btn" onclick="copyUrl()">URLをコピー</button>
                 </div>
             </div>
-
         </aside>
 
-        <main class="col-center">
+        <main class="col-center-top">
             
             <div class="btn-area">
                 <button class="btn btn-save" onclick="saveData()">💾 設定を保存</button>
@@ -505,35 +558,50 @@
                     </div>
 
                 </div>
-
-                <section id="seo-content">
-                    <h2>不動産投資の節税シミュレーションについて</h2>
-                    <p>本ツールは、不動産投資におけるキャッシュフロー、減価償却費、税金（所得税・住民税）、売却時の手残りを一括計算できる無料シミュレーターです。</p>
-                    
-                    <h3>減価償却による節税の仕組み</h3>
-                    <p>木造築古物件などは、法定耐用年数を超えているため短期間（4年など）で減価償却が可能です。これにより帳簿上の経費を大きく計上し、給与所得と損益通算することで、支払った税金の還付を受けることができます。</p>
-                    
-                    <h3>デッドクロス（黒字倒産）への対策</h3>
-                    <p>減価償却期間が終了すると経費が減り、税金が急増する「デッドクロス」が発生します。当シミュレーターでは、この期間の納税額増加も考慮してトータル損益を計算しています。</p>
-                    
-                    <h3>5年以内の短期譲渡にご注意ください</h3>
-                    <p>不動産の所有期間が5年以下の場合、売却益に対する税率が約39%（短期譲渡所得）と高額になります。本ツールでは、リスク回避のため自動的に長期譲渡所得（約20%）が適用される6年目以降の売却で試算しています。</p>
-                </section>
-
-                <footer id="site-footer">
-                    <h4>運営情報・免責事項</h4>
-                    <ul>
-                        <li><strong>運営者:</strong> Estate Simulator 管理人</li>
-                        <li><strong>免責事項:</strong> 本シミュレーションの結果は概算であり、将来の収益を保証するものではありません。実際の税務申告の際は税理士等の専門家にご相談ください。</li>
-                        <li><strong>プライバシーポリシー:</strong> 当サイトでは、アクセス解析のためにCookieを使用しています。個人を特定する情報は収集していません。</li>
-                    </ul>
-                </footer>
-
             </div>
         </main>
 
-        <aside class="col-right"></aside>
+    </div><div class="bottom-wrapper">
+        
+        <section id="seo-content">
+            <h2>不動産投資の節税シミュレーションについて</h2>
+            <p class="intro">
+                本ツールは、不動産投資におけるキャッシュフロー、減価償却費、税金（所得税・住民税）、節税金額、売却時の手残りを一括計算できる無料シミュレーターです。2026年2月現在、無料＆登録無しでこれらの内容を網羅している唯一のシミュレーターです。
+            </p>
+            
+            <button class="seo-accordion">減価償却による節税の仕組み</button>
+            <div class="seo-panel">
+                <p>木造築古物件などは、法定耐用年数を超えているため短期間（4年など）で減価償却が可能です。これにより帳簿上の経費を大きく計上し、給与所得と損益通算することで、支払った税金の還付を受けることができます。</p>
+            </div>
 
+            <button class="seo-accordion">デッドクロス（黒字倒産）への対策</button>
+            <div class="seo-panel">
+                <p>減価償却期間が終了すると経費が減り、税金が急増する「デッドクロス」が発生します。当シミュレーターでは、この期間の納税額増加も考慮してトータル損益を計算しています。</p>
+            </div>
+
+            <button class="seo-accordion">5年以内の短期譲渡にご注意ください</button>
+            <div class="seo-panel">
+                <p>不動産の所有期間が5年以下の場合、売却益に対する税率が約39%（短期譲渡所得）と高額になります。本ツールでは、リスク回避のため自動的に長期譲渡所得（約20%）が適用される6年目以降の売却で試算しています。</p>
+            </div>
+        </section>
+
+        <footer id="site-footer">
+            <span class="footer-copy">Credit Card Simulator © 2026</span>
+            <a class="footer-link" onclick="openModal()">プライバシーポリシー / 免責事項 / 運営者情報</a>
+        </footer>
+
+    </div><aside class="col-right"></aside>
+
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModalBtn()">&times;</span>
+            <h3>運営情報・免責事項</h3>
+            <ul>
+                <li><strong>運営者:</strong> Estate Simulator 管理人</li>
+                <li><strong>免責事項:</strong> 本シミュレーションの結果は概算であり、将来の収益を保証するものではありません。実際の税務申告の際は税理士等の専門家にご相談ください。</li>
+                <li><strong>プライバシーポリシー:</strong> 当サイトでは、アクセス解析のためにCookieを使用しています。個人を特定する情報は収集していません。</li>
+            </ul>
+        </div>
     </div>
 
 <script>
@@ -552,7 +620,6 @@
     function createForm(prefix) {
         let html = "";
         inputsConfig.forEach((section, idx) => {
-            // SEO: divをh3タグに変更
             html += `<h3 class="accordion active">${section.title}</h3>`;
             html += `<div class="panel" style="max-height: none; display: block;">`;
             section.fields.forEach(field => {
@@ -587,7 +654,6 @@
     document.getElementById("form-compare").innerHTML = createForm("cmp_");
 
     document.addEventListener("click", function(e) {
-        // SEO: タグ変更に伴いクラス名判定のみを使用
         if (e.target.classList.contains("accordion")) {
             e.target.classList.toggle("active");
             var panel = e.target.nextElementSibling;
@@ -983,6 +1049,33 @@
             }
         }
     });
+
+    // --- SEO アコーディオンJS ---
+    const acc = document.getElementsByClassName("seo-accordion");
+    for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            } 
+        });
+    }
+
+    // --- フッター モーダルJS ---
+    function openModal() {
+        document.getElementById('modal-overlay').classList.add('show');
+    }
+    function closeModalBtn() {
+        document.getElementById('modal-overlay').classList.remove('show');
+    }
+    function closeModal(e) {
+        if (e.target === document.getElementById('modal-overlay')) {
+            document.getElementById('modal-overlay').classList.remove('show');
+        }
+    }
 
     window.onload = loadData;
 </script>
