@@ -37,15 +37,19 @@
         :root {
             /* --- テーマカラー設定 (Ultra High Contrast Navy) --- */
             --bg-gradient: radial-gradient(120% 120% at 50% 0%, #64748b 0%, #0f172a 60%, #000000 100%);
+            
+            /* グラスモーフィズム */
             --glass-bg: rgba(255, 255, 255, 0.65); 
             --glass-border: rgba(255, 255, 255, 0.5); 
             --glass-blur: blur(30px);
             --shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            
             --primary: #1e293b;
             --accent: #27ae60;
             --danger: #c0392b;
             --warning: #e67e22;
             --amex-blue: #006fcf;
+            
             --hero-bg: #e8f5e9;
             --hero-text: #2e7d32;
         }
@@ -65,28 +69,77 @@
 
         h2, h3 { margin: 0; padding: 0; font-size: 100%; font-weight: normal; }
 
-        .title-container { text-align: center; margin-bottom: 40px; }
+        /* --- タイトルのデザイン化 --- */
+        .title-container {
+            text-align: center;
+            margin-bottom: 40px;
+        }
         h1.title-capsule {
-            display: inline-block; color: #fff; font-size: 28px; font-weight: 700; letter-spacing: 2px;
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3); padding: 15px 50px; border-radius: 50px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;
+            display: inline-block;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 50px;
+            border-radius: 50px;
+            box-shadow: 
+                0 10px 20px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            white-space: nowrap;
         }
         @media (max-width: 768px) {
-            h1.title-capsule { font-size: 20px; padding: 12px 30px; white-space: normal; }
+            h1.title-capsule {
+                font-size: 20px;
+                padding: 12px 30px;
+                white-space: normal;
+            }
         }
 
         /* --- レイアウト構造 --- */
-        .layout-wrapper { max-width: 1400px; margin: 0 auto; display: flex; gap: 30px; align-items: flex-start; }
-        .bottom-wrapper { max-width: 1400px; margin: 0 auto; padding-left: 410px; box-sizing: border-box; }
-
-        .col-left {
-            width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 25px;
-            position: -webkit-sticky; position: sticky; top: 90px; height: fit-content; transition: top 0.3s;
+        .layout-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
         }
-        .col-center-top { flex: 1; min-width: 0; }
-        .col-right { width: 0; display: none; }
+        .bottom-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 410px; 
+            box-sizing: border-box;
+        }
+
+        /* 左カラム (Sticky追従) */
+        .col-left {
+            width: 380px; 
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 90px; 
+            height: fit-content;
+            transition: top 0.3s;
+        }
+
+        /* 中央カラム */
+        .col-center-top {
+            flex: 1; 
+            min-width: 0;
+        }
+
+        /* 右カラム */
+        .col-right {
+            width: 0;
+            display: none;
+        }
 
         @media (max-width: 1100px) {
             .layout-wrapper { flex-direction: column; }
@@ -96,53 +149,143 @@
             .bottom-wrapper { padding-left: 0; margin-top: 20px; }
         }
 
-        /* --- グラスモーフィズムパネル --- */
+        /* --- グラスモーフィズム共通パネル --- */
         .glass-panel {
-            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: var(--shadow);
-            padding: 35px; margin-bottom: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 35px;
+            margin-bottom: 20px;
         }
 
-        /* --- バナー類 --- */
+        /* --- 左カラムバナー --- */
         .promo-card {
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); border-radius: 16px;
-            padding: 30px 20px; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 15px; text-align: center; transition: transform 0.3s, box-shadow 0.3s;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 30px 20px;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        .promo-card:hover { transform: translateY(-5px); box-shadow: 0 20px 45px rgba(0,0,0,0.5); }
-        .promo-card-images { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
-        .promo-card-img { width: 32%; height: auto; object-fit: contain; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); background: #fff; }
-        .promo-card-text { line-height: 1.4; margin: 0; }
-        .promo-main-text { display: block; color: var(--amex-blue); font-weight: 800; font-size: 1.35em; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,111,207,0.1); }
-        h2.promo-main-text-large { display: block; color: var(--amex-blue); font-weight: 800; font-size: 1.35em; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,111,207,0.1); white-space: nowrap; margin: 0; }
-        .promo-sub-text { display: block; font-size: 0.85em; color: #475569; margin-top: 12px; font-weight: bold; white-space: nowrap; }
+        .promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+        }
+
+        .promo-card-images {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .promo-card-img {
+            width: 32%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: #fff;
+        }
+
+        .promo-card-text {
+            line-height: 1.4;
+            margin: 0;
+        }
+        .promo-main-text {
+            display: block;
+            color: var(--amex-blue);
+            font-weight: 800; 
+            font-size: 1.35em;
+            line-height: 1.4;
+            text-shadow: 0 1px 2px rgba(0,111,207,0.1);
+        }
+        h2.promo-main-text-large {
+            display: block;
+            color: var(--amex-blue);
+            font-weight: 800; 
+            font-size: 1.35em;
+            line-height: 1.4;
+            text-shadow: 0 1px 2px rgba(0,111,207,0.1);
+            white-space: nowrap;
+            margin: 0;
+        }
+        .promo-sub-text {
+            display: block;
+            font-size: 0.85em;
+            color: #475569;
+            margin-top: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
         .btn-amex {
-            display: inline-block; width: 100%; background: linear-gradient(to bottom, #0088ff, #005bb5);
-            color: white; font-weight: bold; font-size: 1.1em; text-decoration: none; padding: 16px 0;
-            border-radius: 10px; text-align: center; transition: all 0.2s;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3); border: 1px solid #004a94;
+            display: inline-block;
+            width: 100%;
+            background: linear-gradient(to bottom, #0088ff, #005bb5);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-decoration: none;
+            padding: 16px 0;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+            border: 1px solid #004a94;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
-        .btn-amex:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4); }
-        .link-policy {
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 12px; padding: 15px; display: flex; gap: 15px; align-items: center; color: #dce4ef; font-size: 0.85em;
+        .btn-amex:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
         }
-        .link-icon { font-size: 24px; color: #94a3b8; flex-shrink: 0; }
+
+        /* リンクポリシー */
+        .link-policy {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            color: #dce4ef;
+            font-size: 0.85em;
+        }
+        .link-icon {
+            font-size: 24px;
+            color: #94a3b8;
+            flex-shrink: 0;
+        }
         .copy-btn {
-            background: rgba(255,255,255,0.9); color: #333; border: none; padding: 6px 12px;
-            border-radius: 4px; font-size: 0.85em; font-weight: bold; cursor: pointer; margin-top: 5px; width: 100%;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+            width: 100%;
         }
         .copy-btn:hover { background: #fff; }
 
-        /* --- シミュレーターラッパー (修正箇所) --- */
+        /* --- シミュレーターラッパー --- */
         .simulator-wrapper { display: flex; gap: 30px; transition: all 0.3s ease; }
         .sim-col { width: 100%; transition: width 0.3s; }
         
-        /* ★重要: デフォルトではCompareは完全に非表示 */
-        #sim-compare { display: none; }
+        #sim-compare { display: none; } /* デフォルト非表示 */
 
-        /* 比較モードONの時だけ表示 */
         .simulator-wrapper.show-compare #sim-main { width: 50%; }
         .simulator-wrapper.show-compare #sim-compare { 
             width: 50%; 
@@ -151,7 +294,6 @@
             padding-left: 30px; 
         }
 
-        /* スマホ時の比較モード */
         @media (max-width: 768px) {
             .simulator-wrapper.show-compare { flex-direction: column; }
             .simulator-wrapper.show-compare #sim-main,
@@ -166,8 +308,13 @@
 
         /* ヒーローエリア */
         .hero-section {
-            background-color: var(--hero-bg); border: 3px solid var(--accent); border-radius: 12px;
-            padding: 25px; text-align: center; margin-bottom: 30px; box-shadow: inset 0 0 20px rgba(39, 174, 96, 0.1);
+            background-color: var(--hero-bg);
+            border: 3px solid var(--accent);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: inset 0 0 20px rgba(39, 174, 96, 0.1);
         }
         .hero-title { font-size: 1.2em; color: #555; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .hero-val { font-size: 3em; font-weight: 900; color: var(--hero-text); margin: 5px 0; letter-spacing: -1px; line-height: 1.2; text-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -176,10 +323,22 @@
 
         /* スクロール追従バー */
         #sticky-bar {
-            position: fixed; top: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000;
-            padding: 10px 20px; transform: translateY(-100%); transition: transform 0.3s ease-in-out;
-            display: flex; justify-content: center; align-items: center; box-sizing: border-box; border-bottom: 1px solid #ccc;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            padding: 10px 20px;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            border-bottom: 1px solid #ccc;
         }
         #sticky-bar.visible { transform: translateY(0); }
         .sticky-content { display: flex; gap: 20px; align-items: center; width: 100%; max-width: 1000px; justify-content: center; }
@@ -246,39 +405,93 @@
 
         /* --- SEO: 解説コンテンツエリア --- */
         #seo-content {
-            background: rgba(255, 255, 255, 0.7); padding: 30px; border-radius: 16px; margin-top: 40px;
-            font-size: 0.9em; color: #333; border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(255, 255, 255, 0.7);
+            padding: 30px;
+            border-radius: 16px;
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #333;
+            border: 1px solid rgba(255,255,255,0.5);
         }
         #seo-content h2 { font-size: 1.4em; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
         #seo-content p.intro { margin-bottom: 25px; line-height: 1.7; font-weight: 500; }
 
         .seo-accordion {
-            background-color: transparent; cursor: pointer; padding: 15px 0; width: 100%; border: none; text-align: left;
-            outline: none; font-size: 1.1em; font-weight: bold; color: var(--primary); border-bottom: 1px dashed #ccc;
-            display: flex; justify-content: space-between; align-items: center;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 15px 0;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 1px dashed #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .seo-accordion:after { content: '\002B'; font-weight: bold; font-size: 1.2em; color: #777; margin-left: 10px; }
         .seo-accordion.active:after { content: "\2212"; }
-        .seo-panel { padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; margin-bottom: 5px; }
+        .seo-panel {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-bottom: 5px;
+        }
         .seo-panel p { padding: 15px 0 5px 0; line-height: 1.7; margin: 0; }
 
-        /* --- フッター --- */
-        #site-footer { margin-top: 50px; padding: 30px 20px; background: transparent; text-align: center; font-size: 0.9em; color: #64748b; }
+        /* --- フッター (シンプル＆モーダル) --- */
+        #site-footer {
+            margin-top: 50px;
+            padding: 30px 20px;
+            background: transparent;
+            text-align: center;
+            font-size: 0.9em;
+            color: #64748b;
+        }
         .footer-copy { display: block; margin-bottom: 10px; font-weight: bold; }
-        .footer-link { color: #64748b; text-decoration: underline; cursor: pointer; font-size: 0.9em; }
+        .footer-link {
+            color: #64748b;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
         .footer-link:hover { color: #333; }
 
-        /* モーダル */
+        /* モーダルウィンドウ */
         .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-            z-index: 2000; justify-content: center; align-items: center; padding: 20px;
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         .modal-overlay.show { display: flex; }
         .modal-content {
-            background: #fff; padding: 30px; border-radius: 10px; max-width: 600px; width: 100%; max-height: 80vh;
-            overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; }
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
         .close-modal:hover { color: #000; }
         .modal-content h3 { font-size: 1.2em; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; }
         .modal-content ul { list-style: disc; padding-left: 20px; margin-bottom: 20px; }
@@ -305,6 +518,7 @@
     </div>
 
     <div class="layout-wrapper">
+        
         <aside class="col-left">
             <div class="promo-card">
                 <div class="promo-card-images">
@@ -333,6 +547,7 @@
         </aside>
 
         <main class="col-center-top">
+            
             <div class="btn-area">
                 <button class="btn btn-save" onclick="saveData()">💾 設定を保存</button>
                 <button class="btn btn-compare" onclick="toggleCompare()">⚖️ 比較モード切替</button>
@@ -340,6 +555,7 @@
 
             <div class="glass-panel">
                 <div class="simulator-wrapper" id="sim-wrapper">
+                    
                     <div class="sim-col" id="sim-main">
                         <div id="hero-main" class="hero-section">
                             <div class="hero-title">🏆 トータル最終損益</div>
@@ -362,16 +578,17 @@
                         <div id="form-compare"></div>
                         <div id="result-compare"></div>
                     </div>
+
                 </div>
             </div>
         </main>
-    </div>
 
-    <div class="bottom-wrapper">
+    </div><div class="bottom-wrapper">
+        
         <section id="seo-content">
             <h2>不動産投資の節税シミュレーションについて</h2>
             <p class="intro">
-                本ツールは、不動産投資におけるキャッシュフロー、減価償却費、税金（所得税・住民税）、節税金額、売却時の手残りを一括計算できる無料シミュレーターです。2026年2月現在、無料＆登録無しでこれらの内容を網羅している唯一のシミュレーターです。
+                本ツールは、不動産投資におけるキャッシュフロー、減価償却費、税金（所得税・住民税）、節税金額、売却時の手残りを一括計算できる無料シミュレーターです。無料＆登録無しでこれらの内容を網羅している、非常に詳細なシミュレーターです。
             </p>
             
             <button class="seo-accordion">減価償却による節税の仕組み</button>
@@ -394,9 +611,8 @@
             <span class="footer-copy">Credit Card Simulator © 2026</span>
             <a class="footer-link" onclick="openModal()">プライバシーポリシー / 免責事項 / 運営者情報</a>
         </footer>
-    </div>
 
-    <aside class="col-right"></aside>
+    </div><aside class="col-right"></aside>
 
     <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content">
@@ -404,7 +620,7 @@
             <h3>運営情報・免責事項</h3>
             <ul>
                 <li><strong>運営者:</strong> Estate Simulator 管理人</li>
-                <li><strong>免責事項:</strong> 本シミュレーションの結果は概算であり、将来の収益を保証するものではありません。実際の税務申告の際は税理士等の専門家にご相談ください。</li>
+                <li><strong>免責事項:</strong> 本シミュレーションの結果は概算であり、将来の収益を保証するものではありません。実際の税務申告の際は税理士等の専門家にご相談ください。特に「土地負債利子」の損益通算規制については、本ツールでは簡易計算のため考慮していません（全額損益通算として計算しています）。</li>
                 <li><strong>プライバシーポリシー:</strong> 当サイトでは、アクセス解析のためにCookieを使用しています。個人を特定する情報は収集していません。</li>
             </ul>
         </div>
@@ -790,6 +1006,7 @@
 
     function toggleCompare() { 
         document.getElementById("sim-wrapper").classList.toggle("show-compare"); 
+        
         const stickyCmp = document.getElementById("sticky-item-cmp");
         if (document.getElementById("sim-wrapper").classList.contains("show-compare")) {
             stickyCmp.style.display = "flex";
