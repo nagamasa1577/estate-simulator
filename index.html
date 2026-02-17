@@ -684,6 +684,16 @@
                 通常であれば22年かけて少しずつ経費にする建物の購入代金を、たった4年で一気に経費化できるため、単年度の帳簿上の経費が巨大になります。これを高額な給与所得と相殺（損益通算）することで、課税所得を大幅に圧縮し、確定申告で税金の還付を受けることが可能になります。
             </p>
 
+            <h3>デッドクロス（黒字倒産）への対策</h3>
+            <p>
+                減価償却期間が終了すると経費が減り、税金が急増する「デッドクロス」が発生します。当シミュレーターでは、この期間の納税額増加も考慮してトータル損益を計算しています。
+            </p>
+
+            <h3>5年以内の短期譲渡にご注意ください</h3>
+            <p>
+                不動産の所有期間が5年以下の場合、売却益に対する税率が約39%（短期譲渡所得）と高額になります。本ツールでは、リスク回避のため自動的に長期譲渡所得（約20%）が適用される6年目以降の売却で試算しています。
+            </p>
+
             <h3>当シミュレーターの使い方</h3>
             <ul class="usage-steps">
                 <li>
@@ -1168,6 +1178,19 @@
             }
         }
     });
+
+    const acc = document.getElementsByClassName("seo-accordion");
+    for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            } 
+        });
+    }
 
     function openModal() { document.getElementById('modal-overlay').classList.add('show'); }
     function closeModalBtn() { document.getElementById('modal-overlay').classList.remove('show'); }
